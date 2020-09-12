@@ -1,7 +1,7 @@
 # General data tools
 
 rki.load <- function() {
-  return(read.csv("./Data/RKI_COVID19.csv"))
+  return(read.csv("./data/RKI_COVID19.csv"))
 }
 
 rki.getIDR <- function(df) {

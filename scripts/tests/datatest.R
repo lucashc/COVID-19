@@ -1,4 +1,4 @@
-source("./Script/Functions/datatools.R")
+source("./scripts/functions/datatools.R")
 df <- rki.load()
 IDR <- rki.getIDR(df)
 
