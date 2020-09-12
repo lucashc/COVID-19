@@ -1,0 +1,3 @@
+source("scripts/models/basic.R")
+
+settings.verifyERGM <- TRUE
