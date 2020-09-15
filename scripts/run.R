@@ -14,3 +14,4 @@ if (settings.verifyERGM) {
 sim <- netsim(est, simulation.param, simulation.init, simulation.control)
 
 simulation.results(sim)
+
