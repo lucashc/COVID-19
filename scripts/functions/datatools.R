@@ -11,3 +11,11 @@ rki.getIDR <- function(df) {
   names(df) <- c("date", "infections", "deaths", "recovered")
   df <- aggregate(df[,2:4], FUN=sum, by=list(date=df$date))
 }
+
+sortBundesland <- function(data) {
+  lands <- unique(data$Bundesland)
+  for (l in lands) {
+    print(l)
+    print(sum(data[data$Bundesland == l,]$AnzahlFall))
+  }
+}
