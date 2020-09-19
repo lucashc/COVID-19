@@ -23,12 +23,12 @@ generate_empty_graph <- function(n){
 
 
 
-connect <- function(node1, node2, alpha = 0.5, lambda = 1){
+connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
   w <- node_data$weight
   x <- node_data$x
   y <- node_data$y
-  p <- runif(1)[1]   # uniform sample from [0,1]
-  prob <- 1 - exp(-lambda * w[node1] * w[node2] / ((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**alpha)
+  p <- runif(length(nodes))   # uniform sample from [0,1]
+  prob <- 1 - exp(-lambda * w[node1] * w[nodes] / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
   return(p < prob)
 }
 

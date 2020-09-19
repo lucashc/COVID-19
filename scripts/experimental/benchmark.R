@@ -4,17 +4,15 @@ library(bench)
 n <- 100
 node_data <- generate_node_data(n)
 
-bench_func <- function(){
-  data <- matrix(0, n, n)
+
+bench_func <- function(vec){
   for (i in 1:n) {
-    for (j in 1:n) {
-      data[i, j] <- connect(i, j)
-    }
+    connect(i, vec)
   }
-  return(data)
 }
 
 
 mark(
-  bench_func()
+  {vec <- 1:100
+  bench_func(vec)}
 )
