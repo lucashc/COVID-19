@@ -10,7 +10,13 @@ geo.load <- function(accuracy=1000) {
   X[is.na(X)] <- 0
   return(as.matrix(X))
 }
-
 geo.rpoints <- function(d, n=100) {
   return(rpoint(n, as.im(d)))
+}
+
+geo.sample <- function(n=1000, accuracy=1000) {
+  d <- geo.load(accuracy)
+  p <- geo.rpoints(d, n)
+  rm(d)
+  return(p)
 }
