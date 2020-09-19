@@ -1,11 +1,11 @@
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
-  node_data <- data.frame(weights, x, y)
-  names(node_data) <- c('weight', 'x', 'y')
+  node_data <- data.frame(weights, status, x, y)
+  names(node_data) <- c('weight', 'status', 'x', 'y')
   return(node_data)
 }
 
@@ -34,3 +34,5 @@ connect <- function(node1, node2, alpha = 1, lambda = 1){
   prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))^alpha)
   return(p < prob)
 }
+
+
