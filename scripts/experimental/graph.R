@@ -76,7 +76,6 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   plot(xrec,yrec, pch = 21, col = 'black', cex = dotsize, bg = "green", xlim = x_lims, ylim = y_lims,axes=axes,xlab='',ylab='', asp=1)
   par(new=TRUE)
   plot(xded,yded, pch = 4, col = 'red', cex = dotsize, xlab='',ylab='',axes=axes, xlim = x_lims, ylim = y_lims, asp=1)
-  
   if (edges){   #connect contacting points
     for (main_node in 1:nrow(node_data)){
       neighbors = graph[[main_node]]
