@@ -35,11 +35,6 @@ connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
 
 
 make_edge <- function(graph, node1, node2){
-
-  if (node1 %in% graph[[node2]]){
-    return(graph)
-  
-  }
   graph[[node1]] = c(graph[[node1]], node2)
   graph[[node2]] = c(graph[[node2]], node1)
   return(graph)

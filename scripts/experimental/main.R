@@ -8,12 +8,12 @@ library(progress)
 
 
 # 1
-n <- 10000
+n <- 1000000
 initial_infections <- 10
-n_days <- 10
+n_days <- 20
 infection_prob <- 0.14
-lambda <- 1
-alpha <- 1
+lambda <- 0.001
+alpha <- 4
 
 node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
 graph <- generate_empty_graph(n)
@@ -37,8 +37,8 @@ for (i in 1:n_days) {
   statusD <- node_data$death_time <= i
 
   infected <- which(statusI)
-  recovered <- which(statusI && statusR)
-  dead <- which(statusI && statusD)
+  recovered <- which(statusI & statusR)
+  dead <- which(statusI & statusD)
   newlyinfected <- which(node_data$status == 'J')
   susceptible <- which(node_data$status == 'S')
   
@@ -48,10 +48,8 @@ for (i in 1:n_days) {
   
   # Make edges to new people if they are not infected
   for (sick in newlyinfected) {
-    for (healthy in susceptible) {
-      if (connect(sick, healthy, alpha, lambda)) {
-        graph <- make_edge(graph, sick, healthy)
-      }
+    for (healthy in susceptible[connect(sick, susceptible, alpha, lambda)]) {
+      graph <- make_edge(graph, sick, healthy)
     }
   }
   
@@ -59,14 +57,12 @@ for (i in 1:n_days) {
   
   # Infect people
   for (node in infected) {
-    for (neighbour in graph[[node]]) {
-      if (node_data[neighbour,"status"] == 'S') {
-        if (runif(1)[1] < infection_prob) {
-          node_data[neighbour,"status"] <- 'J'
-          node_data[neighbour,"recovery_time"] <- i + 14
-        }
-      }
-    }
+    neighbours <- graph[[node]]
+    susneighs <- neighbours[which(node_data[neighbours,"status"] == 'S')]
+    infneighs <- susneighs[runif(length(susneighs)) < infection_prob]
+    node_data[infneighs,"status"] <- 'J'
+    node_data[infneighs,"recovery_time"] <- i + 14
+    node_data[infneighs,"death_time"] <- i + 14
   }
   
   # Log data
