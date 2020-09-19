@@ -38,11 +38,12 @@ connect <- function(node1, node2, alpha = 1, lambda = 1){
 }
 
 
-make_edge <- function(graph, node1, node2, safe=TRUE){
-  if (safe){
-    if (node1 %in% graph[[node2]]){
-      return(graph)
-    }
+
+make_edge <- function(graph, node1, node2){
+
+  if (node1 %in% graph[[node2]]){
+    return(graph)
+  
   }
   graph[[node1]] = c(graph[[node1]], node2)
   graph[[node2]] = c(graph[[node2]], node1)
@@ -104,3 +105,4 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
     }
   }
 }
+
