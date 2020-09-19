@@ -78,26 +78,11 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   plot(xded,yded, pch = 4, col = 'red', cex = dotsize, xlab='',ylab='',axes=axes, xlim = x_lims, ylim = y_lims, asp=1)
   
   if (edges){   #connect contacting points
-    print(nrow(node_data))
-    print(length(graph))
     for (main_node in 1:nrow(node_data)){
       neighbors = graph[[main_node]]
-  
-      neighbor_amount = length(neighbors)
-      if (neighbor_amount == 0){
-        next
-      }
       
-      for (neighbor_node in neighbors){
-        x_to = vector()
-        y_to = vector()
-  
-        if (TRUE){#(neighbor_node > main_node){
-          x_to= c(x_to, node_data$x[neighbor_node])
-          y_to = c(y_to, node_data$y[neighbor_node])
-        }
-        
-      }
+      x_to = node_data$x[neighbors]
+      y_to = node_data$y[neighbors]
       
       if (length(x_to) > 0){
         segments(node_data$x[main_node], node_data$y[main_node], x_to, y_to)
