@@ -37,15 +37,17 @@ connect <- function(node1, node2, alpha = 1, lambda = 1){
 }
 
 
-make_edge <- function(node1, node2){
+make_edge <- function(graph, node1, node2){
   graph[[node1]] = c(graph[[node1]], node2)
   graph[[node2]] = c(graph[[node2]], node1)
+  return(graph)
 }
 
 
 plotgraph <- function(node_data,axbool = FALSE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status=='I'),]$x
+  print(xinf)
   yinf <- node_data[which(node_data$status=='I'),]$y
   xsus <- node_data[which(node_data$status=='S'),]$x
   ysus <- node_data[which(node_data$status=='S'),]$y
@@ -53,43 +55,66 @@ plotgraph <- function(node_data,axbool = FALSE, dotsize = 1) {
   yrec <- node_data[which(node_data$status=='R'),]$y
   xded <- node_data[which(node_data$status=='D'),]$x
   yded <- node_data[which(node_data$status=='D'),]$y
+  
+  x_max = max(node_data$x)
+  x_min = min(node_data$x)
+  x_lims = c(x_min, x_max)
+  y_max = max(node_data$y)
+  y_min = min(node_data$y)
+  y_lims = c(y_min, y_max)
   #plot data separately per color
-  plot(xinf,yinf, pch = 21, col = "black", cex = dotsize, bg = 'red', xlim = c(0,10), ylim = c(0,10),axes=axbool,xlab='',ylab='')
+  plot(xinf,yinf, pch = 21, col = "black", cex = dotsize, bg = 'red', xlim = x_lims, ylim = y_lims,axes=axbool,xlab='',ylab='')
   par(new=TRUE)
-  plot(xsus,ysus, pch = 21, col = "black", cex = dotsize, bg = 'blue', xlim = c(0,10), ylim = c(0,10),axes=axbool,xlab='',ylab='')
+  plot(xsus,ysus, pch = 21, col = "black", cex = dotsize, bg = 'blue', xlim = x_lims, ylim = y_lims,axes=axbool,xlab='',ylab='')
   par(new=TRUE)
-  plot(xrec,yrec, pch = 21, col = 'black', cex = dotsize, bg = "green", xlim = c(0,10), ylim = c(0,10),axes=axbool,xlab='',ylab='')
+  plot(xrec,yrec, pch = 21, col = 'black', cex = dotsize, bg = "green", xlim = x_lims, ylim = y_lims,axes=axbool,xlab='',ylab='')
   par(new=TRUE)
-  plot(xded,yded, pch = 4, col = 'red', cex = dotsize, xlab='',ylab='',axes=FALSE, xlim = c(0,10), ylim = c(0,10))
+  plot(xded,yded, pch = 4, col = 'red', cex = dotsize, xlab='',ylab='',axes=axbool, xlim = x_lims, ylim = y_lims)
+  
+  if (TRUE){
   #connect contacting points
-  for (main_node in length(node_data)){
-    neighbors = graph[main_node]
+  for (main_node in 1:length(node_data)){
+    neighbors = graph[[main_node]]
     neighbor_amount = length(neighbors)
     if (neighbor_amount == 0){
       next
     }
+    
     for (neighbor_node in neighbors){
-      to_x = vector()
-      to_y = vector()
-      i = 1
+      print(neighbors)
+      x_to = vector()
+      y_to = vector()
+
       if (neighbor_node > main_node){
-        to_x = c(to_x, node_data$x[neighbor_node])
-        to_y = c(to_y, node_data$y[neighbor_node])
+        x_to= c(x_to, node_data$x[neighbor_node])
+        y_to = c(y_to, node_data$y[neighbor_node])
+        print(x_to)
+        print(y_to)
       }
-      segments(node_data$x[main_node], node_data$y[main_node], to_x, to_y)
+      if (length(x_to) > 0){
+        segments(node_data$x[main_node], node_data$y[main_node], x_to, y_to)
+      }
     }
+  }
   }
 }
 
 
-n = 20
+n = 10
 node_data <- generate_node_data(n)
+node_data$status[2] = 'I'
+node_data$status[3] = 'R'
+node_data$status[4] = 'D'
 graph <- generate_empty_graph(n)
-make_edge(1,2)
-make_edge(2,3)
-make_edge(2,4)
-make_edge(4,5)
-make_edge(5,6)
-make_edge(6,7)
-make_edge(6,8)
-plotgraph(node_data)
+graph <- make_edge(graph, 1,2)
+graph <- make_edge(graph, 2,3)
+graph <- make_edge(graph, 2,4)
+graph <- make_edge(graph, 4,5)
+graph <- make_edge(graph, 5,6)
+graph <- make_edge(graph, 6,7)
+graph <- make_edge(graph, 6,8)
+graph <- make_edge(graph, 9,10)
+
+print(graph)
+plotgraph(node_data, TRUE)
+print(node_data)
