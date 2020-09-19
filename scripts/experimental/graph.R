@@ -19,8 +19,8 @@ for (i in 1:n){
 
 
 distance <- function(node1, node2){
-  x = graph$x
-  y = graph$y
+  x = node_data$x
+  y = node_data$y
   return ((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5
 }
 
@@ -46,10 +46,11 @@ for (node1 in 1:n){
       next
     }
     if (connect(node1, node2)){
-      graph[node1] = c(graph[node1], node2)
-      graph[node2] = c(graph[node2], node1)
+      graph[[node1]] = c(graph[[node1]], node2)
+      graph[[node2]] = c(graph[[node2]], node1)
     }
   }
 }
 
 print(graph)
+
