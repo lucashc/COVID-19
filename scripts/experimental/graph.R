@@ -1,13 +1,13 @@
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), death_time= rep.int(-1,n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
-  node_data <- data.frame(weights, status, recovery_time, x, y)
-  names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'D', 'R')
+  node_data <- data.frame(weights, status, recovery_time, death_time, x, y)
+  names(node_data) <- c('weight', 'status', 'recovery_time', 'death_time', 'x', 'y')
+  levels(node_data$status) <- c('S', 'I', 'D', 'R', 'J')
   return(node_data)
 }
 
@@ -20,6 +20,7 @@ generate_empty_graph <- function(n){
   }
   return(graph)
 }
+
 
 
 connect <- function(node1, node2, alpha = 0.5, lambda = 1){
