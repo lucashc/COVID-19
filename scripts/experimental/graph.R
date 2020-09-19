@@ -46,10 +46,11 @@ for (node1 in 1:n){
       next
     }
     if (connect(node1, node2)){
-      graph[node1] = c(graph[node1], node2)
-      graph[node2] = c(graph[node2], node1)
+      graph[[node1]] = c(graph[[node1]], node2)
+      graph[[node2]] = c(graph[[node2]], node1)
     }
   }
 }
 
 print(graph)
+
