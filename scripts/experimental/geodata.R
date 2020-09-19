@@ -14,9 +14,17 @@ geo.rpoints <- function(d, n=100) {
   return(rpoint(n, as.im(d)))
 }
 
-geo.sample <- function(n=1000, accuracy=1000) {
+geo.verify_data <- function(d, p) {
+  plot(t(apply(m, 2, rev)))
+  points(pdata$x/684, 1-pdata$y/808, pch=20, cex=0.5, col="green")
+}
+
+geo.sample <- function(n=1000, accuracy=1000, verify=FALSE) {
   d <- geo.load(accuracy)
   p <- geo.rpoints(d, n)
+  if (verify) {
+    geo.verify_data(d, p)
+  }
   rm(d)
   return(p)
 }
