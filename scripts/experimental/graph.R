@@ -1,11 +1,11 @@
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
-  node_data <- data.frame(weights, status, x, y)
-  names(node_data) <- c('weight', 'status', 'x', 'y')
+  node_data <- data.frame(weights, status, recovery_time, x, y)
+  names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
   levels(node_data$status) <- c('S', 'I', 'D', 'R')
   return(node_data)
 }
@@ -65,6 +65,9 @@ plotgraph <- function(node_data,axbool = FALSE, dotsize = 1) {
   for (main_node in length(node_data)){
     neighbors = graph[main_node]
     neighbor_amount = length(neighbors)
+    if (neighbor_amount == 0){
+      next
+    }
     for (neighbor_node in neighbors){
       to_x = vector()
       to_y = vector()
