@@ -22,18 +22,12 @@ generate_empty_graph <- function(n){
 }
 
 
-distance_c <- function(node1, node2){
-  x = node_data$x
-  y = node_data$y
-  return((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5
-}
-
-
-
-connect <- function(node1, node2, alpha = 1, lambda = 1){
-  w = node_data$weight
+connect <- function(node1, node2, alpha = 0.5, lambda = 1){
+  w <- node_data$weight
+  x <- node_data$x
+  y <- node_data$y
   p <- runif(1)[1]   # uniform sample from [0,1]
-  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))^alpha)
+  prob <- 1 - exp(-lambda * w[node1] * w[node2] / ((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**alpha)
   return(p < prob)
 }
 
