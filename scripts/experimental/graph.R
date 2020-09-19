@@ -1,13 +1,13 @@
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), death_time= rep.int(-1,n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
-  node_data <- data.frame(weights, status, recovery_time, x, y)
-  names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'D', 'R')
+  node_data <- data.frame(weights, status, recovery_time, death_time, x, y)
+  names(node_data) <- c('weight', 'status', 'recovery_time', 'death_time', 'x', 'y')
+  levels(node_data$status) <- c('S', 'I', 'D', 'R', 'J')
   return(node_data)
 }
 
@@ -22,18 +22,18 @@ generate_empty_graph <- function(n){
 }
 
 
-distance_c <- function(node1, node2){
+sqdistance_c <- function(node1, node2){
   x = node_data$x
   y = node_data$y
-  return((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5
+  return((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)
 }
 
 
 
-connect <- function(node1, node2, alpha = 1, lambda = 1){
+connect <- function(node1, node2, alpha = 2, lambda = 1){
   w = node_data$weight
   p <- runif(1)[1]   # uniform sample from [0,1]
-  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))^alpha)
+  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))**alpha)
   return(p < prob)
 }
 
