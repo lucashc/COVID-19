@@ -38,6 +38,9 @@ connect <- function(node1, node2, alpha = 1, lambda = 1){
 
 
 make_edge <- function(graph, node1, node2){
+  if (node2 %in% graph[[node1]]){
+    return(graph)
+  }
   graph[[node1]] = c(graph[[node1]], node2)
   graph[[node2]] = c(graph[[node2]], node1)
   return(graph)
@@ -100,21 +103,21 @@ plotgraph <- function(node_data,axbool = FALSE, dotsize = 1) {
 }
 
 
-n = 10
-node_data <- generate_node_data(n)
-node_data$status[2] = 'I'
-node_data$status[3] = 'R'
-node_data$status[4] = 'D'
-graph <- generate_empty_graph(n)
-graph <- make_edge(graph, 1,2)
-graph <- make_edge(graph, 2,3)
-graph <- make_edge(graph, 2,4)
-graph <- make_edge(graph, 4,5)
-graph <- make_edge(graph, 5,6)
-graph <- make_edge(graph, 6,7)
-graph <- make_edge(graph, 6,8)
-graph <- make_edge(graph, 9,10)
-
-print(graph)
-plotgraph(node_data, TRUE)
-print(node_data)
+# n = 10
+# node_data <- generate_node_data(n)
+# node_data$status[2] = 'I'
+# node_data$status[3] = 'R'
+# node_data$status[4] = 'D'
+# graph <- generate_empty_graph(n)
+# graph <- make_edge(graph, 1,2)
+# graph <- make_edge(graph, 2,3)
+# graph <- make_edge(graph, 2,4)
+# graph <- make_edge(graph, 4,5)
+# graph <- make_edge(graph, 5,6)
+# graph <- make_edge(graph, 6,7)
+# graph <- make_edge(graph, 6,8)
+# graph <- make_edge(graph, 9,10)
+# 
+# print(graph)
+# plotgraph(node_data, TRUE)
+# print(node_data)
