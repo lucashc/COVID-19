@@ -1,5 +1,8 @@
 # List of required packages
 install.packages(c(
   "data.table",
-  "Dict"
+  "Dict",
+  "raster",
+  "rgdal",
+  "spatstat"
 ))
