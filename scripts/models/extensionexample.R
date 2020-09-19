@@ -1,5 +1,5 @@
 # ergm specifications
-erg.networksize <- 1000
+erg.networksize <- 1000000
 erg.formation <- ~edges
 erg.target.stats <- c(erg.networksize*2)
 erg.coef.diss <- dissolution_coefs(dissolution = ~offset(edges), duration = 80)
