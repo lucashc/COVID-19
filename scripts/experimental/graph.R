@@ -81,8 +81,9 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
     for (main_node in 1:nrow(node_data)){
       neighbors = graph[[main_node]]
       
-      x_to = node_data$x[neighbors]
-      y_to = node_data$y[neighbors]
+      nodes_to_connect = neighbors[which(neighbors>main_node)]
+      x_to = node_data$x[nodes_to_connect]
+      y_to = node_data$y[nodes_to_connect]
       
       if (length(x_to) > 0){
         segments(node_data$x[main_node], node_data$y[main_node], x_to, y_to)
