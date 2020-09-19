@@ -1,24 +1,30 @@
-n <- 50
-lambda <- 1
+source("geodata.R")
+
+n <- 1000
+lambda <- 0.005
 alpha <- 1
 
 
+
 weights <- rep.int(1, n)
-x <- rnorm(n, 0, 10)
-y <- rnorm(n, 0, 10)
+
+
+sample = geo.sample(n)
+x <- sample$x
+y <- sample$y
 node_data <- data.frame(weights, x, y)
 names(node_data) <- c('weight', 'x', 'y')
 
 
 graph = list()
 for (i in 1:n){
-  graph[[i]] <-  c(0)
+  graph[[i]] <-  vector()
 }
 
 
 
 
-distance <- function(node1, node2){
+distance_c <- function(node1, node2){
   x = node_data$x
   y = node_data$y
   return ((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5
@@ -28,8 +34,9 @@ distance <- function(node1, node2){
 
 connect <- function(node1, node2){
   w = node_data$weight
-  p <- runif(1, 0, 1)
-  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance(node1, node2))^alpha)
+  p <- runif(1, 0, 1)[1]
+  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))^alpha)
+  
   if(p < prob) {
     return(TRUE)
   }
