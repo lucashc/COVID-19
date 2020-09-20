@@ -4,5 +4,6 @@ install.packages(c(
   "raster",
   "rgdal",
   "spatstat",
-  "progress"
+  "progress",
+  "rgdal"
 ))
