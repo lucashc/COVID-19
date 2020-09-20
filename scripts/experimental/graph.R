@@ -89,7 +89,7 @@ diagnostics <- function(graph){
     distances <- c(distances, neighbor_distances)
   }
   
-  total_edges <- sum(edges_per_node) / 2  # edges are double counted 
+  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are double counted 
   average_edges_per_node <- total_edges / n
   average_edges_connected_to_node <- average_edges_per_node * 2 # double counting is desired in this case
   average_distance <- mean(distances)
