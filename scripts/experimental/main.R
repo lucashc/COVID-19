@@ -8,7 +8,7 @@ library(progress)
 
 
 # 1
-n <- 100000
+n <- 10000
 initial_infections <- 10
 n_days <- 20
 infection_prob <- 0.05
@@ -22,14 +22,12 @@ initial_infected = sample(nrow(node_data), initial_infections)
 node_data[initial_infected, "status"] <- 'J'
 node_data[initial_infected, "recovery_time"] <- 14
 
-
 history <- data.frame(S=n-initial_infections, I=0, R=0, J=initial_infections)
 
 # 2
 pb <- progress_bar$new(total = n_days, format='Simulating [:bar] :percent eta: :eta')
 pb$tick(0)
 for (i in 1:n_days) {
-  # Get list of infected
   statusI <- node_data$status == 'I'
   statusR <- node_data$recovery_time <= i
 
@@ -67,4 +65,4 @@ for (i in 1:n_days) {
   pb$tick()
 }
 print(history)
-print(sum(as.numeric(lapply(graph, length))))
+diagnostics(graph)
