@@ -8,7 +8,7 @@ library(progress)
 
 
 # 1
-n <- 10000
+n <- 100000
 initial_infections <- 10
 n_days <- 20
 infection_prob <- 0.05
