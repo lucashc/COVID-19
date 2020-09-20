@@ -12,10 +12,8 @@ bench_func_connect <- function(vec){
 }
 
 bench_func_make <- function(graph) {
-  for (i in 1:as.integer(n/2)) {
-    for (j in as.integer(n/2):n) {
-      graph <- make_edge(graph, i, j)
-    }
+  for (sick in 1:5) {
+    graph[[sick]] <- susceptible[connect(sick, susceptible, alpha, lambda)]
   }
 }
 

@@ -1,26 +1,24 @@
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), death_time= rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
-  node_data <- data.frame(weights, status, recovery_time, death_time, x, y)
-  names(node_data) <- c('weight', 'status', 'recovery_time', 'death_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'D', 'R', 'J')
+  node_data <- data.frame(weights, status, recovery_time, x, y)
+  names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
+  levels(node_data$status) <- c('S', 'I', 'R', 'J')
   return(node_data)
 }
 
 
-
 generate_empty_graph <- function(n){
-  graph = list()
+  graph <- list()
   for (i in 1:n){
     graph[[i]] <-  vector()
   }
   return(graph)
 }
-
 
 
 connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
@@ -29,17 +27,9 @@ connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
   y <- node_data$y
   p <- runif(length(nodes))   # uniform sample from [0,1]
   prob <- 1 - exp(-lambda * w[node1] * w[nodes] / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
+  # prob <- 1 - exp(-lambda / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
   return(p < prob)
 }
-
-
-
-make_edge <- function(graph, node1, node2){
-  graph[[node1]] = c(graph[[node1]], node2)
-  graph[[node2]] = c(graph[[node2]], node1)
-  return(graph)
-}
-
 
 plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
@@ -49,8 +39,6 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   ysus <- node_data[which(node_data$status=='S'),]$y
   xrec <- node_data[which(node_data$status=='R'),]$x
   yrec <- node_data[which(node_data$status=='R'),]$y
-  xded <- node_data[which(node_data$status=='D'),]$x
-  yded <- node_data[which(node_data$status=='D'),]$y
   
   x_max = max(node_data$x)
   x_min = min(node_data$x)
