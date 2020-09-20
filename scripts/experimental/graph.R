@@ -1,4 +1,5 @@
 library(comprehenr)
+library(MASS)
 source("./scripts/experimental/geodata.R")
 
 generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
@@ -77,7 +78,7 @@ distance_c <- function(node1, node2){
 }
 
 
-diagnostics <- function(graph){
+diagnostics <- function(graph, fit=FALSE){
   n = length(graph)
   distances = vector()
   edges_per_node = vector()
@@ -99,11 +100,25 @@ diagnostics <- function(graph){
   print('--- Graph diagnostics ---')
   print(sprintf('Nodes: %d', n))
   print(sprintf('Edges: %d', total_edges))
-  print(sprintf('Average edges connected to node: %f', average_edges_connected_to_node))
-  print(sprintf('Average distance between connected nodes: %f', average_distance))
+  print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node))
+  print(sprintf('Average distance between connected nodes: %.2f', average_distance))
   print('See plots for histograms of edges and distances')
   par(mfrow = c(1,2))
-  hist(edges_per_node, main = 'Edges connected to a node', xlab = "edges connected to node")
-  hist(distances, main = 'Distances between connected nodes')
-  print(distances)
-}
+  hist(edges_per_node, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
+  if (fit){
+    fitparams = fitdistr(edges_per_node, "poisson")
+    xas = 0:max(edges_per_node)
+    lines(xas, dpois(xas, fitparams$estimate))
+    print('Poisson parameters for #edges:')
+    print(fitparams$estimate['lambda'])
+  }
+  hist(distances, main = 'Distances between connected nodes', probability=fit)
+  if (fit){
+    fitparams = fitdistr(distances, "exponential")
+    xas = seq(0, max(distances), l=1000)
+    lines(xas, dexp(xas, fitparams$estimate))
+    print(fitparams$estimate)
+    print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
+  }
+  
+  }
