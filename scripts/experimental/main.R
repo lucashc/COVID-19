@@ -25,8 +25,8 @@ node_data[initial_infected, "recovery_time"] <- 14
 history <- data.frame(S=n-initial_infections, I=0, R=0, J=initial_infections)
 
 # 2
-pb <- progress_bar$new(total = n_days, format='Simulating [:bar] :percent eta: :eta')
-pb$tick(0)
+pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent infected: :infections")
+pb$tick(0, tokens=list(infections=inital))
 for (i in 1:n_days) {
   statusI <- node_data$status == 'I'
   statusR <- node_data$recovery_time <= i
@@ -56,13 +56,15 @@ for (i in 1:n_days) {
   }
   
   # Log data
+  new_n_inf <- sum(node_data$status == "J")
+  old_n_inf <- sum(node_data$status == "I")
   history[nrow(history) + 1,] <- c(
     sum(node_data$status == "S"),
-    sum(node_data$status == "I"),
+    old_n_inf,
     sum(node_data$status == "R"),
-    sum(node_data$status == "J")
+    new_n_inf
   )
-  pb$tick()
+  pb$tick(tokens=list(infections=new_n_inf+old_n_inf))
 }
 print(history)
 diagnostics(graph)
