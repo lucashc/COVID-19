@@ -1,7 +1,7 @@
 source('./scripts/experimental/graph.R')
 library(bench)
 
-n <- 100
+n <- 1000
 #node_data <- generate_node_data(n)
 
 
@@ -17,7 +17,7 @@ bench_func_make <- function(graph) {
   }
 }
 
-mark(
-  {graph <- generate_empty_graph(n)
-  bench_func_make(graph)}
+bench::mark(
+  {vec <- 1:n
+  bench_func_connect(vec)}
 )

@@ -27,8 +27,8 @@ connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
   x <- node_data$x
   y <- node_data$y
   p <- runif(length(nodes))   # uniform sample from [0,1]
-  prob <- 1 - exp(-lambda * w[node1] * w[nodes] / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
-  # prob <- 1 - exp(-lambda / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
+  prob <- -expm1(-lambda * w[node1] * w[nodes] / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
+  # prob <- x- expm1(-lambda / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
   return(p < prob)
 }
 
@@ -53,9 +53,7 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   plot(xsus,ysus, pch = 21, col = "black", cex = dotsize, bg = 'blue', xlim = x_lims, ylim = y_lims,axes=axes,xlab='',ylab='', asp=1)
   par(new=TRUE)
   plot(xrec,yrec, pch = 21, col = 'black', cex = dotsize, bg = "green", xlim = x_lims, ylim = y_lims,axes=axes,xlab='',ylab='', asp=1)
-  par(new=TRUE)
-  plot(xded,yded, pch = 4, col = 'red', cex = dotsize, xlab='',ylab='',axes=axes, xlim = x_lims, ylim = y_lims, asp=1)
-  
+ 
   if (edges){   #connect contacting points
     for (main_node in 1:nrow(node_data)){
       neighbors = graph[[main_node]]
@@ -88,7 +86,7 @@ diagnostics <- function(graph){
     edges_per_node = c(edges_per_node, length(neighbors))
     
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-    neighbor_distances = to_vec(for (neighbor in neighbors) distance_c(main_node, neighbor))
+    neighbor_distances = distance_c(main_node, reduced_neighbors)
     distances = c(distances, neighbor_distances)
   }
   
