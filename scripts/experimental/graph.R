@@ -1,14 +1,14 @@
 library(comprehenr)
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), death_time= rep.int(-1,n), accuracy = 1000){
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
-  node_data <- data.frame(weights, status, recovery_time, x, y)
-  names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'D', 'R')
+  node_data <- data.frame(weights, status, recovery_time, death_time, x, y)
+  names(node_data) <- c('weight', 'status', 'recovery_time', 'death_time', 'x', 'y')
+  levels(node_data$status) <- c('S', 'I', 'D', 'R', 'J')
   return(node_data)
 }
 
@@ -23,6 +23,7 @@ generate_empty_graph <- function(n){
 }
 
 
+<<<<<<< HEAD
 distance_c <- function(node1, node2){
   x = node_data$x
   y = node_data$y
@@ -30,22 +31,21 @@ distance_c <- function(node1, node2){
 }
 
 
+=======
+>>>>>>> 88b544e7d6917df8ebb714e2bc3e1db479d61e27
 
-connect <- function(node1, node2, alpha = 1, lambda = 1){
-  w = node_data$weight
-  p <- runif(1)[1]   # uniform sample from [0,1]
-  prob <- 1 - exp(-lambda*w[node1]*w[node2]/(distance_c(node1, node2))^alpha)
+connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
+  w <- node_data$weight
+  x <- node_data$x
+  y <- node_data$y
+  p <- runif(length(nodes))   # uniform sample from [0,1]
+  prob <- 1 - exp(-lambda * w[node1] * w[nodes] / ((x[node1]-x[nodes])**2 + (y[node1]-y[nodes])**2)**alpha)
   return(p < prob)
 }
 
 
 
 make_edge <- function(graph, node1, node2){
-
-  if (node1 %in% graph[[node2]]){
-    return(graph)
-  
-  }
   graph[[node1]] = c(graph[[node1]], node2)
   graph[[node2]] = c(graph[[node2]], node1)
   return(graph)
