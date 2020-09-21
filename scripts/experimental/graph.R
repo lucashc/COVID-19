@@ -83,6 +83,8 @@ diagnostics <- function(graph, fit=FALSE){
   distances = vector()
 
   edges_per_node = vector()
+  pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
+  pb$tick(0)
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
     edges_per_node <- c(edges_per_node, length(neighbors))
@@ -90,6 +92,7 @@ diagnostics <- function(graph, fit=FALSE){
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     neighbor_distances = distance_c(main_node, reduced_neighbors)
     distances <- c(distances, neighbor_distances)
+    pb$tick()
   }
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are double counted 
