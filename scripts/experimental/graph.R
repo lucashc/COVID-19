@@ -22,7 +22,7 @@ generate_empty_graph <- function(n){
 }
 
 
-connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
+connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
   w <- node_data$weight
   x <- node_data$x
   y <- node_data$y
@@ -32,7 +32,7 @@ connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
   return(p < prob)
 }
 
-plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
+plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status=='I'),]$x
   yinf <- node_data[which(node_data$status=='I'),]$y
@@ -70,6 +70,7 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 }
 
 
+
 node_distance <- function(node1, node2){
   x <- node_data$x
   y <- node_data$y
@@ -90,14 +91,13 @@ pinvexp <- function(q,lambda,alpha){
 }
 
 
-diagnostics <- function(graph, fit=FALSE){
+diagnostics <- function(node_data, graph, fit=FALSE){
   n = length(graph)
   edges_per_node = vector(length = n)
   
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
     edges_per_node[main_node] <- length(neighbors)
-    pb$tick()
   }
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting  
@@ -132,8 +132,8 @@ diagnostics <- function(graph, fit=FALSE){
   print('See plots for histograms of edges and distances')
   
   
-  # par(mfrow = c(1,3))
-  # hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
+  par(mfrow = c(1,3))
+  hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
   # if (fit){
   #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
   #   xas = 1:max(edges_per_node)
@@ -141,7 +141,7 @@ diagnostics <- function(graph, fit=FALSE){
   #   print('Poisson parameters for #edges:')
   #   print(fitparams$estimate['lambda'])
   # }
-  # hist(distances, main = 'Distances between connected nodes', probability=fit)
+  hist(distances, main = 'Distances between connected nodes', probability=fit)
   
   
 
