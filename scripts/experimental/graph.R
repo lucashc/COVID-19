@@ -91,28 +91,13 @@ pinvexp <- function(q,lambda,alpha){
 
 
 diagnostics <- function(graph, fit=FALSE){
-  # n = length(graph)
-  # distances = vector()
-  # 
-  # edges_per_node = vector(length=n)
-  # for (main_node in 1:n){
-  #   neighbors <- graph[[main_node]]
-  #   edges_per_node[main_node] = length(neighbors)
-  #   
-  #   reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-  #   neighbor_distances = node_distance(main_node, reduced_neighbors)
-  #   distances <- c(distances, neighbor_distances)
-  # }
-  
-  #--------------------------
-  
   n = length(graph)
+  edges_per_node = vector(length = n)
   
-  
-  edges_per_node = vector(length=n)
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
-    edges_per_node[main_node] = length(neighbors)
+    edges_per_node[main_node] <- length(neighbors)
+    pb$tick()
   }
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting  
@@ -120,18 +105,18 @@ diagnostics <- function(graph, fit=FALSE){
   edge_nr = 1
   for (main_node in 1:n){
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-    k = len(reduced_neighbors)
-    neighbor_distances = node_distance(main_node, reduced_neighbors)
-    distances[edge_nr:k-1] <- c(distances, neighbor_distances)
-    edge_nr = edge_nr + k
+    k = length(reduced_neighbors)
+    if (k != 0){
+      neighbor_distances = node_distance(main_node, reduced_neighbors)
+      distances[edge_nr:(edge_nr+k-1)] <- neighbor_distances
+      edge_nr = edge_nr + k
+    }
+
   }
   
+
   
-  
-  
-  #-----------------------------
-  
-  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
+  average_edges_per_node = total_edges/n  # edges are corrected for double-counting
   average_edges_connected_to_node <- average_edges_per_node * 2 # double counting is desired in this case
   average_distance <- mean(distances)
   
@@ -145,33 +130,35 @@ diagnostics <- function(graph, fit=FALSE){
   print(sprintf('Average distance between connected nodes: %.2f', average_distance))
   print(sprintf("Isolated nodes: %d", length(edges_per_node)-length(edges_per_node_filtered)))
   print('See plots for histograms of edges and distances')
-  par(mfrow = c(1,3))
-  hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
-  if (fit){
-    fitparams = fitdistr(edges_per_node_filtered, "poisson")
-    xas = 1:max(edges_per_node)
-    lines(xas, dpois(xas, fitparams$estimate))
-    print('Poisson parameters for #edges:')
-    print(fitparams$estimate['lambda'])
-  }
-  hist(distances, main = 'Distances between connected nodes', probability=fit)
+  
+  
+  # par(mfrow = c(1,3))
+  # hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
+  # if (fit){
+  #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
+  #   xas = 1:max(edges_per_node)
+  #   lines(xas, dpois(xas, fitparams$estimate))
+  #   print('Poisson parameters for #edges:')
+  #   print(fitparams$estimate['lambda'])
+  # }
+  # hist(distances, main = 'Distances between connected nodes', probability=fit)
   
   
 
-  
-  if (fit){
-    # the distance distr will be called "invexp"
-    
-
-    
-    # fitparams = fitdist(distances, "invexp", start = list(lambda = 1, alpha = 1), method="mle") #fitdistr(distances, "exponential")
-    fitparams = fitdistr(distances, "weibull")
-    xas = seq(0, max(distances), l=1000)
-    print(fitparams)
-    lines(xas, dweibull(xas, fitparams$estimate))
-    plot(xas,  dweibull(xas, fitparams$estimate))
-    print(fitparams$estimate)
-    print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
-  }
+  # 
+  # if (fit){
+  #   # the distance distr will be called "invexp"
+  #   
+  # 
+  #   
+  #   # fitparams = fitdist(distances, "invexp", start = list(lambda = 1, alpha = 1), method="mle") #fitdistr(distances, "exponential")
+  #   fitparams = fitdistr(distances, "weibull")
+  #   xas = seq(0, max(distances), l=1000)
+  #   print(fitparams)
+  #   lines(xas, dweibull(xas, fitparams$estimate))
+  #   plot(xas,  dweibull(xas, fitparams$estimate))
+  #   print(fitparams$estimate)
+  #   print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
+  # }
 
 }
