@@ -4,5 +4,7 @@ install.packages(c(
   "raster",
   "rgdal",
   "spatstat",
-  "progress"
+  "progress",
+  "ggplot2",
+  "reshape2"
 ))
