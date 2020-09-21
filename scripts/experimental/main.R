@@ -1,4 +1,5 @@
 source('./scripts/experimental/graph.R')
+source('./scripts/experimental/plot.R')
 library(progress)
 # Steps for simulation
 # 1. Initalize graph, set states
@@ -25,8 +26,8 @@ node_data[initial_infected, "recovery_time"] <- 14
 history <- data.frame(day=0, S=n-initial_infections, I=0, R=0, J=initial_infections)
 
 # 2
-pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent infected: :infections")
-pb$tick(0, tokens=list(infections=inital))
+pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent :current/:total I: :I J: :J")
+pb$tick(0, tokens=list(I=0, J=initial_infections))
 for (i in 1:n_days) {
   statusI <- node_data$status == 'I'
   statusR <- node_data$recovery_time <= i
@@ -64,7 +65,8 @@ for (i in 1:n_days) {
     sum(node_data$status == "R"),
     new_n_inf
   )
-  pb$tick(tokens=list(infections=new_n_inf+old_n_inf))
+  pb$tick(tokens=list(J=new_n_inf, I=old_n_inf))
 }
 print(history)
 diagnostics(graph)
+plotSIRJ(history, S=FALSE)
