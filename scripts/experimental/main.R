@@ -22,7 +22,7 @@ initial_infected = sample(nrow(node_data), initial_infections)
 node_data[initial_infected, "status"] <- 'J'
 node_data[initial_infected, "recovery_time"] <- 14
 
-history <- data.frame(S=n-initial_infections, I=0, R=0, J=initial_infections)
+history <- data.frame(day=0, S=n-initial_infections, I=0, R=0, J=initial_infections)
 
 # 2
 pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent infected: :infections")
@@ -58,7 +58,7 @@ for (i in 1:n_days) {
   # Log data
   new_n_inf <- sum(node_data$status == "J")
   old_n_inf <- sum(node_data$status == "I")
-  history[nrow(history) + 1,] <- c(
+  history[nrow(history) + 1,] <- c(i,
     sum(node_data$status == "S"),
     old_n_inf,
     sum(node_data$status == "R"),
