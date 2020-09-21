@@ -42,7 +42,7 @@ for (i in 1:n_days) {
   
   # Make edges to new people if they are not infected
   for (sick in newlyinfected) {
-    graph[[sick]] <- susceptible[connect(sick, susceptible, alpha, lambda)]
+    graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
   }
   
   node_data[newlyinfected,"status"] = "I"
@@ -67,6 +67,7 @@ for (i in 1:n_days) {
   )
   pb$tick(tokens=list(J=new_n_inf, I=old_n_inf))
 }
+
 print(history)
-diagnostics(graph)
-plotSIRJ(history, S=FALSE)
+diagnostics(node_data, graph)
+# plotSIRJ(history, S=FALSE)
