@@ -22,7 +22,7 @@ generate_empty_graph <- function(n){
 }
 
 
-connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
+connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
   w <- node_data$weight
   x <- node_data$x
   y <- node_data$y
@@ -32,7 +32,7 @@ connect <- function(node1, nodes, alpha = 0.5, lambda = 1){
   return(p < prob)
 }
 
-plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
+plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status=='I'),]$x
   yinf <- node_data[which(node_data$status=='I'),]$y
@@ -70,7 +70,7 @@ plotgraph <- function(node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 }
 
 
-distance_c <- function(node1, node2){
+distance_c <- function(node_data, node1, node2){
   x <- node_data$x
   y <- node_data$y
   return(((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5)
@@ -78,7 +78,7 @@ distance_c <- function(node1, node2){
 
 
 
-diagnostics <- function(graph, fit=FALSE){
+diagnostics <- function(node_data, graph, fit=FALSE){
   n = length(graph)
   distances = vector()
 
@@ -90,7 +90,7 @@ diagnostics <- function(graph, fit=FALSE){
     edges_per_node <- c(edges_per_node, length(neighbors))
     
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-    neighbor_distances = distance_c(main_node, reduced_neighbors)
+    neighbor_distances = distance_c(node_data, main_node, reduced_neighbors)
     distances <- c(distances, neighbor_distances)
     pb$tick()
   }
