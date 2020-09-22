@@ -71,10 +71,10 @@ plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 
 
 
-node_distance <- function(node1, node2){
+node_distance <- function(node_data, node1, node2){
   x <- node_data$x
   y <- node_data$y
-  return(((x[node1]-x[node2])**2 + (y[node1]-y[node2])**2)**0.5)
+  return( ((x[node1]-x[node2])^2 + (y[node1]-y[node2])^2)^0.5 )
 }
 
 
@@ -91,7 +91,7 @@ pinvexp <- function(q,lambda,alpha){
 }
 
 
-diagnostics <- function(node_data, graph, fit=FALSE){
+diagnostics <- function(graph, node_data, fit=FALSE){
   n = length(graph)
   edges_per_node = vector(length = n)
   
@@ -104,10 +104,17 @@ diagnostics <- function(node_data, graph, fit=FALSE){
   distances = vector(length = total_edges)
   edge_nr = 1
   for (main_node in 1:n){
+    neighbors <- graph[[main_node]]
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     k = length(reduced_neighbors)
+    # print("red_n")
+    # print(reduced_neighbors)
+
     if (k != 0){
-      neighbor_distances = node_distance(main_node, reduced_neighbors)
+      neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
+      # print("k, n_d")
+      # print(k)
+      # print(neighbor_distances)
       distances[edge_nr:(edge_nr+k-1)] <- neighbor_distances
       edge_nr = edge_nr + k
     }
@@ -132,7 +139,7 @@ diagnostics <- function(node_data, graph, fit=FALSE){
   print('See plots for histograms of edges and distances')
   
   
-  par(mfrow = c(1,3))
+  par(mfrow = c(1,2))
   hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
   # if (fit){
   #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
