@@ -71,6 +71,7 @@ plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 
 
 
+
 node_distance <- function(node_data, node1, node2){
   x <- node_data$x
   y <- node_data$y
@@ -78,30 +79,22 @@ node_distance <- function(node_data, node1, node2){
 }
 
 
-# distribution functions for distance fitting (must be in global scope)
-
-dinvexp <- function(x,lambda,alpha){
-  return(-expm1(-lambda/x^alpha))
-}
-
-pinvexp <- function(q,lambda,alpha){
-  # this function only exists because fitdistrplus complains if it doesn't
-  # even though it is not used. There is no closed form PDF for this distribution
-  return(q)
-}
-
 
 diagnostics <- function(graph, node_data, fit=FALSE){
   n = length(graph)
-  edges_per_node = vector(length = n)
-  
+  distances = vector()
+
+  edges_per_node = vector()
+  pb <- progress_bar$new(total = 2*n, format=" Diagnosing [:bar] :percent")
+  pb$tick(0)
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
     edges_per_node[main_node] <- length(neighbors)
+    pb$tick()
   }
-  
-  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting  
-  distances = vector(length = total_edges)
+
+  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
+  distances <- vector(length = total_edges)
   edge_nr = 1
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
@@ -112,18 +105,15 @@ diagnostics <- function(graph, node_data, fit=FALSE){
 
     if (k != 0){
       neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
-      # print("k, n_d")
-      # print(k)
-      # print(neighbor_distances)
       distances[edge_nr:(edge_nr+k-1)] <- neighbor_distances
       edge_nr = edge_nr + k
     }
+    pb$tick()
 
   }
-  
 
-  
-  average_edges_per_node = total_edges/n  # edges are corrected for double-counting
+  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are double counted 
+  average_edges_per_node <- total_edges / n
   average_edges_connected_to_node <- average_edges_per_node * 2 # double counting is desired in this case
   average_distance <- mean(distances)
   
@@ -137,8 +127,7 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   print(sprintf('Average distance between connected nodes: %.2f', average_distance))
   print(sprintf("Isolated nodes: %d", length(edges_per_node)-length(edges_per_node_filtered)))
   print('See plots for histograms of edges and distances')
-  
-  
+
   par(mfrow = c(1,2))
   hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
   # if (fit){
@@ -149,21 +138,10 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   #   print(fitparams$estimate['lambda'])
   # }
   hist(distances, main = 'Distances between connected nodes', probability=fit)
-  
-  
-
-  # 
   # if (fit){
-  #   # the distance distr will be called "invexp"
-  #   
-  # 
-  #   
-  #   # fitparams = fitdist(distances, "invexp", start = list(lambda = 1, alpha = 1), method="mle") #fitdistr(distances, "exponential")
-  #   fitparams = fitdistr(distances, "weibull")
+  #   fitparams = fitdistr(distances, "exponential")
   #   xas = seq(0, max(distances), l=1000)
-  #   print(fitparams)
-  #   lines(xas, dweibull(xas, fitparams$estimate))
-  #   plot(xas,  dweibull(xas, fitparams$estimate))
+  #   lines(xas, dexp(xas, fitparams$estimate))
   #   print(fitparams$estimate)
   #   print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
   # }
