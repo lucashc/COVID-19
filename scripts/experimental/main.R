@@ -7,6 +7,8 @@ library(progress)
 # 2a. Choose newly infected, check recovery (prob density) or direct
 # 2b. Make new edges if necessary
 
+# Make reproducible
+set.seed(1)
 
 # 1
 n <- 100000
