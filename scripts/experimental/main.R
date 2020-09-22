@@ -1,6 +1,7 @@
 source('./scripts/experimental/graph.R')
 #source('./scripts/experimental/plot.R')
 library(progress)
+library(parallel)
 # Steps for simulation
 # 1. Initalize graph, set states
 # 2. Timestep
@@ -11,11 +12,11 @@ library(progress)
 set.seed(1)
 
 # 1
-n <- 100000
+n <- 3e6
 initial_infections <- 10
 n_days <- 20
 infection_prob <- 0.05
-lambda <- 0.02
+lambda <- 1e-3
 alpha <- 0.5
 
 node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
@@ -43,11 +44,13 @@ for (i in 1:n_days) {
   node_data[recovered, "status"] <- 'R'
   
   # Make edges to new people if they are not infected
-  graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]})
+  # Works parallel on Linux
+  graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = 4)
+  # Serial execution
   # for (sick in newlyinfected) {
   #   graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
   # }
-  # 
+
   node_data[newlyinfected,"status"] = "I"
   
   # Infect people
