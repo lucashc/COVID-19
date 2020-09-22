@@ -11,6 +11,16 @@ library(parallel)
 # Make reproducible
 set.seed(1)
 
+# Check if Windows or Linux
+if (.Platform$OS.type == "unix") {
+  # Parallel execution works
+  ncores <- 4
+  print("Running on UNIX, enable multi core support")
+}else {
+  ncores <- 1
+  print("Running on Windows, disable multi core support")
+}
+
 # 1
 n <- 1e6
 initial_infections <- 10
@@ -45,7 +55,7 @@ for (i in 1:n_days) {
   
   # Make edges to new people if they are not infected
   # Works parallel on Linux
-  graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = 4)
+  graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = ncores)
   # Serial execution
   # for (sick in newlyinfected) {
   #   graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
