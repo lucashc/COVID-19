@@ -1,5 +1,5 @@
 source('./scripts/experimental/graph.R')
-source('./scripts/experimental/plot.R')
+#source('./scripts/experimental/plot.R')
 library(progress)
 # Steps for simulation
 # 1. Initalize graph, set states
@@ -43,10 +43,11 @@ for (i in 1:n_days) {
   node_data[recovered, "status"] <- 'R'
   
   # Make edges to new people if they are not infected
-  for (sick in newlyinfected) {
-    graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
-  }
-  
+  graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]})
+  # for (sick in newlyinfected) {
+  #   graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
+  # }
+  # 
   node_data[newlyinfected,"status"] = "I"
   
   # Infect people
@@ -71,5 +72,3 @@ for (i in 1:n_days) {
 }
 
 print(history)
-diagnostics(graph, node_data)
-# plotSIRJ(history, S=FALSE)
