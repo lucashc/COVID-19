@@ -1,14 +1,19 @@
 library(MASS)
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
+  # Status codes
+  # S: 0
+  # J: 1
+  # I: 2
+  # R: 3
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
   node_data <- data.frame(weights, status, recovery_time, x, y)
   names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'R', 'J')
+  #levels(node_data$status) <- c('S', 'I', 'R', 'J')
   return(node_data)
 }
 
