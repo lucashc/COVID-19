@@ -20,5 +20,7 @@ plotHeatMap<- function(node_data, title="Heat map of infections", from=1) {
   jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
   d1 <- ggplot()
   d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
-  d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7))
+  d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²')
+  d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
+  print(d1)
 }
