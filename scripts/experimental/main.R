@@ -27,10 +27,12 @@ initial_infections <- 10
 n_days <- 20
 infection_prob <- 0.05
 lambda <- 1e-3
+lpois <- 14
 alpha <- 0.5
 
 node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
 graph <- generate_empty_graph(n)
+recoverytime <- 1 + rpois(n, lpois)
 
 initial_infected = sample(nrow(node_data), initial_infections)
 node_data[initial_infected, "status"] <- 1
@@ -40,7 +42,7 @@ history <- data.frame(day=0, S=n-initial_infections, I=0, R=0, J=initial_infecti
 
 # 2
 pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent :current/:total I: :I J: :J")
-pb$tick(0, tokens=list(I=0, J=initial_infections))
+pb <- pb$tick(0, tokens=list(I=0, J=initial_infections))
 for (i in 1:n_days) {
   statusI <- node_data$status == 2
   statusR <- node_data$recovery_time <= i
@@ -69,7 +71,7 @@ for (i in 1:n_days) {
     susneighs <- neighbours[which(node_data[neighbours,"status"] == 0)]
     infneighs <- susneighs[runif(length(susneighs)) < infection_prob]
     node_data[infneighs,"status"] <- 1
-    node_data[infneighs,"recovery_time"] <- i + 14
+    node_data[infneighs,"recovery_time"] <- i + recoverytime[infneighs]
   }
   
   # Log data
