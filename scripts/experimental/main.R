@@ -2,6 +2,7 @@ source('./scripts/experimental/graph.R')
 #source('./scripts/experimental/plot.R')
 library(progress)
 library(parallel)
+library(EnvStats)
 # Steps for simulation
 # 1. Initalize graph, set states
 # 2. Timestep
@@ -22,14 +23,14 @@ if (.Platform$OS.type == "unix") {
 }
 
 # 1
-n <- 1e6
+n <- 1e5
 initial_infections <- 10
 n_days <- 20
 infection_prob <- 0.05
-lambda <- 1e-3
+lambda <- 0.2e-2
 alpha <- 0.5
 
-node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
+node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = rpareto(n, 0.1))
 graph <- generate_empty_graph(n)
 
 initial_infected = sample(nrow(node_data), initial_infections)
@@ -85,3 +86,5 @@ for (i in 1:n_days) {
 }
 
 print(history)
+diagnostics(graph, node_data)
+
