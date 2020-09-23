@@ -37,6 +37,11 @@ connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
   return(p < prob)
 }
 
+
+
+
+
+
 plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status==2),]$x
@@ -77,6 +82,8 @@ plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 
 
 
+
+
 node_distance <- function(node_data, node1, node2){
   x <- node_data$x
   y <- node_data$y
@@ -88,36 +95,62 @@ node_distance <- function(node_data, node1, node2){
 diagnostics <- function(graph, node_data, fit=FALSE){
   n = length(graph)
   distances = vector()
+  edges_per_node = vector(length=n)
 
-  edges_per_node = vector()
-  pb <- progress_bar$new(total = 2*n, format=" Diagnosing [:bar] :percent")
+  pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
   pb$tick(0)
   for (main_node in 1:n){
     neighbors <- graph[[main_node]]
-    edges_per_node[main_node] <- length(neighbors)
-    pb$tick()
-  }
+    edges_per_node[main_node] = length(neighbors)
 
-  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
-  distances <- vector(length = total_edges)
-  edge_nr = 1
-  for (main_node in 1:n){
-    neighbors <- graph[[main_node]]
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-    k = length(reduced_neighbors)
-    # print("red_n")
-    # print(reduced_neighbors)
-
-    if (k != 0){
-      neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
-      distances[edge_nr:(edge_nr+k-1)] <- neighbor_distances
-      edge_nr = edge_nr + k
-    }
+    neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
+    distances <- c(distances, neighbor_distances)
     pb$tick()
-
+    
   }
+  display_diagnostics(edges_per_node, distances, fit)
+}
 
-  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are double counted 
+
+
+sample_diagnostics <- function(graph, node_data, fraction, fit=FALSE){
+  n = length(graph)
+  n_sample <- as.integer(round(n*fraction))
+  distances = vector()
+  edges_per_node = vector(length=n_sample)
+  
+  sampled_nodes = sample(1:n, n_sample)
+  
+  pb <- progress_bar$new(total = n_sample, format=" Diagnosing [:bar] :percent")
+  pb$tick(0)
+
+  for (main_node in sampled_nodes){
+    neighbors <- graph[[main_node]]
+    edges_per_node[main_node] = length(neighbors)
+    
+    reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
+    neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
+    distances <- c(distances, neighbor_distances)
+    pb$tick()
+    
+    
+  }
+  display_diagnostics(edges_per_node, distances, fit)
+}
+
+
+
+
+
+
+
+
+display_diagnostics <- function(edges_per_node, distances, fit=FALSE){
+  
+  total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
+  
+  
   average_edges_per_node <- total_edges / n
   average_edges_connected_to_node <- average_edges_per_node * 2 # double counting is desired in this case
   average_distance <- mean(distances)
@@ -152,3 +185,30 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   # }
 
 }
+
+
+
+avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
+  n = length(graph)
+  total_edges = 0
+  if (!sample){
+    for (main_node in 1:n){
+      neighbors <- graph[[main_node]]
+      total_edges = total_edges + length(neighbors)
+    }
+    
+  }
+  else{
+    n_sample <- as.integer(round(n*sample_ratio))
+    sampled_nodes = sample(1:n, n_sample)
+    
+    for (main_node in sampled_nodes){
+      neighbors <- graph[[main_node]]
+      total_edges = total_edges +  length(neighbors)
+    }
+    total_edges = total_edges/sample_ratio
+  }
+  return(total_edges/n)
+}
+
+
