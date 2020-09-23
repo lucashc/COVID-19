@@ -37,6 +37,11 @@ connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
   return(p < prob)
 }
 
+
+
+
+
+
 plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status==2),]$x
@@ -73,6 +78,8 @@ plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
     }
   }
 }
+
+
 
 
 
@@ -134,6 +141,11 @@ sample_diagnostics <- function(graph, node_data, fraction, fit=FALSE){
 
 
 
+
+
+
+
+
 display_diagnostics <- function(edges_per_node, distances, fit=FALSE){
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
@@ -172,6 +184,31 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE){
   #   print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
   # }
 
+}
+
+
+
+avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
+  n = length(graph)
+  total_edges = 0
+  if (!sample){
+    for (main_node in 1:n){
+      neighbors <- graph[[main_node]]
+      total_edges = total_edges + length(neighbors)
+    }
+    
+  }
+  else{}
+    n_sample <- as.integer(round(n*fraction))
+    sampled_nodes = sample(1:n, n_sample)
+    
+    for (main_node in sampled_nodes){
+      neighbors <- graph[[main_node]]
+      total_edges = total_edges +  length(neighbors)
+    }
+    total_edges = total_edges/sample_ratio
+  }
+  return(total_edges/n)
 }
 
 
