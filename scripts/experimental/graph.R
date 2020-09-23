@@ -1,14 +1,19 @@
 library(MASS)
 source("./scripts/experimental/geodata.R")
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep('S', n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
+  # Status codes
+  # S: 0
+  # J: 1
+  # I: 2
+  # R: 3
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
   node_data <- data.frame(weights, status, recovery_time, x, y)
   names(node_data) <- c('weight', 'status', 'recovery_time', 'x', 'y')
-  levels(node_data$status) <- c('S', 'I', 'R', 'J')
+  #levels(node_data$status) <- c(0, 2, 3, 1)
   return(node_data)
 }
 
@@ -34,12 +39,12 @@ connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
 
 plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
-  xinf <- node_data[which(node_data$status=='I'),]$x
-  yinf <- node_data[which(node_data$status=='I'),]$y
-  xsus <- node_data[which(node_data$status=='S'),]$x
-  ysus <- node_data[which(node_data$status=='S'),]$y
-  xrec <- node_data[which(node_data$status=='R'),]$x
-  yrec <- node_data[which(node_data$status=='R'),]$y
+  xinf <- node_data[which(node_data$status==2),]$x
+  yinf <- node_data[which(node_data$status==2),]$y
+  xsus <- node_data[which(node_data$status==0),]$x
+  ysus <- node_data[which(node_data$status==0),]$y
+  xrec <- node_data[which(node_data$status==3),]$x
+  yrec <- node_data[which(node_data$status==3),]$y
   
   x_max <- max(node_data$x)
   x_min <- min(node_data$x)
