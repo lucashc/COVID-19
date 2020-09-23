@@ -198,8 +198,8 @@ avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
     }
     
   }
-  else{}
-    n_sample <- as.integer(round(n*fraction))
+  else{
+    n_sample <- as.integer(round(n*sample_ratio))
     sampled_nodes = sample(1:n, n_sample)
     
     for (main_node in sampled_nodes){
