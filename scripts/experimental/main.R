@@ -1,5 +1,5 @@
 source('./scripts/experimental/graph.R')
-#source('./scripts/experimental/plot.R')
+source('./scripts/experimental/plot.R')
 library(progress)
 library(parallel)
 # Steps for simulation
@@ -87,3 +87,6 @@ for (i in 1:n_days) {
 }
 
 print(history)
+
+plotSIRJ(history, S=FALSE)
+plotHeatMap(node_data, from = 2)
