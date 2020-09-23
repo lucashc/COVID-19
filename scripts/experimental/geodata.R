@@ -30,3 +30,7 @@ geo.sample <- function(n=1000, accuracy=1000, verify=FALSE) {
   rm(d)
   return(p)
 }
+geo.getMask <- function() {
+  X <- raster('germany.tif')
+  return(as.matrix(X))
+}
