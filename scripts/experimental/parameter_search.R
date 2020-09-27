@@ -1,26 +1,28 @@
 source('./scripts/experimental/graph.R')
 library(progress)
+library(parallel)
 
 # Make reproducible
-# set.seed(1)
+set.seed(1)
 
-search <- function(n, sample_size, lambda, alpha) {
-  
-  node_data <- generate_simple_node_data(n)
+ncores = 8
+
+search <- function(n, sample_size, lambda, alpha, node_data = NA) {
+  if (is.na(node_data)){node_data <- generate_simple_node_data(n)}
   
   sampled = sample(nrow(node_data), sample_size)
-  total_edges = 0
-
-  for (s in sampled) {
-    if (s == n) {next}
+  
+  total_edges = sum(mcmapply(function(s) {
+    if (s == n) {return(0)}
     susceptible = (s+1):n
-    total_edges = total_edges + sum(connect(node_data, s, susceptible, alpha, lambda))
-  }
+    return(sum(connect(node_data, s, susceptible, alpha, lambda)))}, sampled, mc.cores = ncores))
+
   return(2*total_edges/sample_size)
 }
 
 average_avg_edges <- function(alpha, n, lambda, sample_size, shots = 5, accuracy = 1000) {
-  x = replicate(shots, search(n, sample_size, lambda, alpha))
+  node_data = generate_simple_node_data(n)
+  x = replicate(shots, search(n, sample_size, lambda, alpha, node_data))
   print(sprintf("variance: %f", var(x)))
   return(mean(x))
 }
@@ -43,13 +45,15 @@ find_lambda <- function(n, alpha, sample_size, step=1, shots = 10, target = 7.95
     print(sprintf("guess: %.2f", guess))
   }
   
-  print(sprintf("%i: final lambda: %.2f", n, lambda))
+  print(sprintf("%i: final lambda: %f", n, lambda))
   return(lambda)
 }
 
 
-lambdas = data.frame("n" = 2:20*500, "lambda"= rep(0, 19))
-for (i in 1:nrow(lambdas)) {
-  lambdas$lambda[i] = find_lambda(lambdas$n[i], 0.5, lambdas$n[i])
-}
-print(lambdas)
+# lambdas = data.frame("n" = 2:20*500, "lambda"= rep(0, 19))
+# for (i in 1:nrow(lambdas)) {
+#   lambdas$lambda[i] = find_lambda(lambdas$n[i], 0.5, lambdas$n[i])
+# }
+# print(lambdas)
+
+find_lambda(1e5, 0.5, 1e4, 0.02)
