@@ -1,11 +1,9 @@
 source('./scripts/experimental/graph.R')
-#source('./scripts/experimental/plot.R')
 library(progress)
 
 # Make reproducible
 set.seed(1)
 
-# 1
 search <- function(n, sample_size, lambda, alpha) {
   
   node_data <- generate_simple_node_data(n)
