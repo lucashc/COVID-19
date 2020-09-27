@@ -43,26 +43,21 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent :current/:total I: :I J: :J")
   pb <- pb$tick(0, tokens=list(I=0, J=initial_infections))
   for (i in 1:n_days) {
+    # Make edges to new people if they are not infected. This works parallel on Linux.
+    susceptible <- which(node_data$status == 0)
+    newlyinfected <- which(node_data$status == 1)
+    graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = ncores)
+    
+    node_data[newlyinfected,"status"] = 2
+    
     statusI <- node_data$status == 2
     statusR <- node_data$recovery_time <= i
   
     infected <- which(statusI)
-    newlyinfected <- which(node_data$status == 1)
-    susceptible <- which(node_data$status == 0)
     
     # Handle recovery
     recovered <- which(statusI & statusR)
     node_data[recovered, "status"] <- 3
-    
-    # Make edges to new people if they are not infected
-    # Works parallel on Linux
-    graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = ncores)
-    # Serial execution
-    # for (sick in newlyinfected) {
-    #   graph[[sick]] <- susceptible[connect(node_data, sick, susceptible, alpha, lambda)]
-    # }
-  
-    node_data[newlyinfected,"status"] = 2
     
     # Infect people
     for (node in infected) {
