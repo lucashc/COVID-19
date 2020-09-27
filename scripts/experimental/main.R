@@ -87,6 +87,9 @@ for (i in 1:n_days) {
 }
 
 print(history)
-diagnostics(graph, node_data)
+diag <- graph_diagnostics(graph, node_data, groups = c(1,2))
+print(diag)
+plot(diag)
+
 plotSIRJ(history, S=FALSE)
 plotHeatMap(node_data, from = 2)

@@ -86,8 +86,14 @@ node_distance <- function(node_data, node1, node2){
 
 
 
-diagnostics <- function(graph, node_data, fit=FALSE){
-  explored = which(node_data$status > 1) 
+graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
+  if (0 %in% groups){
+    warning("Including susceptible nodes drastically increases compute time", immediate. = TRUE)
+  }
+  if (all(groups == 1)){
+    stop("Newly infected nodes do not have edges")
+  }
+  explored = which(node_data$status %in% groups) 
   n = length(explored)
   distances = vector()
   
@@ -108,37 +114,34 @@ diagnostics <- function(graph, node_data, fit=FALSE){
     pb$tick()
   }
   
-  print('--- Graph diagnostics ---')
-  display_diagnostics(edges_per_node, distances, fit)
+  average_edges_connected_to_node <- mean(edges_per_node) # double counting is desired in this case
+  average_distance <- mean(distances)
+  
+  diag <- list(edges_per_node = edges_per_node, distances = distances, average_distance = average_distance, average_edges_connected_to_node = average_edges_connected_to_node)
+  class(diag) <- "graph_diagnostics"
+  
+  return(diag)
 }
 
 
 
-display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_ratio = 1){
+print.graph_diagnostics <- function(diag){
+  edges_per_node = diag$edges_per_node
+  distances = diag$distances
+  average_distance = diag$average_distance
+  average_edges_connected_to_node = diag$average_edges_connected_to_node
+  
+  
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
-  average_edges_connected_to_node <- mean(edges_per_node) # double counting is desired in this case
-  average_distance <- mean(distances)
-  
   # Remove 0 connected edges
-  edges_per_node_filtered <- Filter(function(y) {y!=0}, edges_per_node)
-  print(sprintf('Explored nodes: %d', length(edges_per_node)))
+  print('--- Graph diagnostics ---', quote=FALSE)
+  print(sprintf('Explored nodes: %d', length(edges_per_node)), quote=FALSE)
   
-  if (sample_ratio != 1){
-    total_edges = round(total_edges/sample_ratio)
-    n_isolated_nodes = round(n_isolated_nodes/sample_ratio)
-  }
-  print(sprintf('Edges: %d', total_edges))
-  print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node))
-  print(sprintf('Average distance between connected nodes: %.2f', average_distance))
-  print('See plots for histograms of edges and distances')
+  print(sprintf('Edges: %d', total_edges), quote=FALSE)
+  print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node), quote=FALSE)
+  print(sprintf('Average distance between connected nodes: %.2f', average_distance), quote=FALSE)
 
-  par(mfrow = c(1,2))
-  edges_hist = hist(edges_per_node_filtered, plot=FALSE) # ,probability=fit)
-  if (sample_ratio != 1 && !fit){
-    edges_hist$counts <- round(edges_hist$counts/sample_ratio)
-  }
-  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
-  
+ 
   # if (fit){
   #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
   #   xas = 1:max(edges_per_node)
@@ -148,11 +151,7 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_rat
   # }
   
   
-  distance_hist = hist(distances, plot=FALSE) # ,probability=fit)
-  if (sample_ratio != 1 && !fit){
-    distance_hist$counts <- round(distance_hist$counts/sample_ratio)
-  }
-  plot(distance_hist, main = 'Distances between connected nodes')
+
   
   
   # if (fit){
@@ -164,6 +163,15 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_rat
   # }
 
 }
+
+plot.graph_diagnostics <- function(diag){
+  par(mfrow = c(1,2))
+  edges_hist = hist(diag$edges_per_node, plot=FALSE)
+  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
+  distance_hist = hist(diag$distances, plot=FALSE)
+  plot(distance_hist, main = 'Distances between connected nodes')
+}
+
 
 
 avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
