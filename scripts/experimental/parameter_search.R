@@ -12,7 +12,8 @@ search <- function(n, sample_size, lambda, alpha) {
   total_edges = 0
 
   for (s in sampled) {
-    susceptible = s+1:n
+    if (s == n) {next}
+    susceptible = (s+1):n
     total_edges = total_edges + sum(connect(node_data, s, susceptible, alpha, lambda))
   }
   print(total_edges)

@@ -48,10 +48,6 @@ connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
 }
 
 
-
-
-
-
 plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status==2),]$x
