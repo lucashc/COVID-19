@@ -21,7 +21,7 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14) {
+simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE) {
 
   node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
   graph <- generate_empty_graph(n)
@@ -32,6 +32,12 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   node_data[initial_infected, "recovery_time"] <- 14
   
   history <- data.frame(day=0, S=n-initial_infections, I=0, R=0, J=initial_infections)
+  
+  if (monitor) {
+    diagnostic_history <- list()
+    diagnostic_history[[1]] <- graph_diagnostics(graph, node_data)
+    class(diagnostic_history) <- "diagnostic_history"
+  }
   
   # 2
   pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent :current/:total I: :I J: :J")
@@ -77,8 +83,14 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
       new_n_inf
     )
     pb$tick(tokens=list(J=new_n_inf, I=old_n_inf))
+    if (monitor) {
+      diagnostic_history[[i+1]] <- graph_diagnostics(graph, node_data)
+    }
   }
-  result <- list(graph=graph, node_data=node_data, history=history)
+  result <- list(graph=graph, node_data=node_data, history=history, diagnostic_history=NULL)
   class(result) <- "simulation_results"
+  if (monitor) {
+    result$diagnostic_history <- diagnostic_history
+  }
   return(result)
 }
