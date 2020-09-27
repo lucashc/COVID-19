@@ -1,4 +1,5 @@
 library(MASS)
+library(progress)
 source("./scripts/experimental/geodata.R")
 
 generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
@@ -96,6 +97,9 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   n = length(graph)
   distances = vector()
   edges_per_node = vector(length=n)
+  
+
+  
 
   pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
   pb$tick(0)
@@ -109,14 +113,16 @@ diagnostics <- function(graph, node_data, fit=FALSE){
     pb$tick()
     
   }
+  
+  print('--- Graph diagnostics ---')
   display_diagnostics(edges_per_node, distances, fit)
 }
 
 
 
-sample_diagnostics <- function(graph, node_data, fraction, fit=FALSE){
+sample_diagnostics <- function(graph, node_data, sample_ratio, fit=FALSE){
   n = length(graph)
-  n_sample <- as.integer(round(n*fraction))
+  n_sample <- as.integer(round(n*sample_ratio))
   distances = vector()
   edges_per_node = vector(length=n_sample)
   
@@ -124,19 +130,23 @@ sample_diagnostics <- function(graph, node_data, fraction, fit=FALSE){
   
   pb <- progress_bar$new(total = n_sample, format=" Diagnosing [:bar] :percent")
   pb$tick(0)
-
+  
+  i = 1
   for (main_node in sampled_nodes){
     neighbors <- graph[[main_node]]
-    edges_per_node[main_node] = length(neighbors)
+    edges_per_node[i] = length(neighbors)
     
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
     distances <- c(distances, neighbor_distances)
     pb$tick()
+    i = i+1
     
     
   }
-  display_diagnostics(edges_per_node, distances, fit)
+  print('--- Estimated graph diagnostics ---')
+  display_diagnostics(edges_per_node, distances, fit, sample_ratio = sample_ratio)
+
 }
 
 
@@ -146,28 +156,36 @@ sample_diagnostics <- function(graph, node_data, fraction, fit=FALSE){
 
 
 
-display_diagnostics <- function(edges_per_node, distances, fit=FALSE){
-  
+display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_ratio = 1){
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
   
   
-  average_edges_per_node <- total_edges / n
-  average_edges_connected_to_node <- average_edges_per_node * 2 # double counting is desired in this case
+  #average_edges_per_node <- total_edges / n
+  average_edges_connected_to_node <- sum(edges_per_node)/2 # double counting is desired in this case
   average_distance <- mean(distances)
   
   # Remove 0 connected edges
   edges_per_node_filtered <- Filter(function(y) {y!=0}, edges_per_node)
+  n_isolated_nodes = length(edges_per_node)-length(edges_per_node_filtered)
   
-  print('--- Graph diagnostics ---')
   print(sprintf('Nodes: %d', n))
+  
+  if (sample_ratio != 1){
+    total_edges = round(total_edges/sample_ratio)
+    n_isolated_nodes = round(n_isolated_nodes/sample_ratio)
+  }
   print(sprintf('Edges: %d', total_edges))
   print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node))
   print(sprintf('Average distance between connected nodes: %.2f', average_distance))
-  print(sprintf("Isolated nodes: %d", length(edges_per_node)-length(edges_per_node_filtered)))
+  print(sprintf("Isolated nodes: %d", n_isolated_nodes))
   print('See plots for histograms of edges and distances')
 
   par(mfrow = c(1,2))
-  hist(edges_per_node_filtered, main = 'Edges connected to a node', xlab = "edges connected to node", probability=fit)
+  edges_hist = hist(edges_per_node_filtered, plot=FALSE) # ,probability=fit)
+  if (sample_ratio != 1 && !fit){
+    edges_hist$counts <- round(edges_hist$counts/sample_ratio)
+  }
+  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
   # if (fit){
   #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
   #   xas = 1:max(edges_per_node)
@@ -175,7 +193,11 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE){
   #   print('Poisson parameters for #edges:')
   #   print(fitparams$estimate['lambda'])
   # }
-  hist(distances, main = 'Distances between connected nodes', probability=fit)
+  distance_hist = hist(distances, plot=FALSE) # ,probability=fit)
+  if (sample_ratio != 1 && !fit){
+    distance_hist$counts <- round(distance_hist$counts/sample_ratio)
+  }
+  plot(distance_hist, main = 'Distances between connected nodes')
   # if (fit){
   #   fitparams = fitdistr(distances, "exponential")
   #   xas = seq(0, max(distances), l=1000)
@@ -204,7 +226,7 @@ avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
     
     for (main_node in sampled_nodes){
       neighbors <- graph[[main_node]]
-      total_edges = total_edges +  length(neighbors)
+      total_edges = total_edges + length(neighbors)
     }
     total_edges = total_edges/sample_ratio
   }
