@@ -39,10 +39,6 @@ connect <- function(node_data, node1, nodes, alpha = 0.5, lambda = 1){
 }
 
 
-
-
-
-
 plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
   #split data
   xinf <- node_data[which(node_data$status==2),]$x
@@ -82,9 +78,6 @@ plotgraph <- function(graph, node_data, axes = FALSE, edges=TRUE, dotsize = 1) {
 
 
 
-
-
-
 node_distance <- function(node_data, node1, node2){
   x <- node_data$x
   y <- node_data$y
@@ -118,9 +111,6 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   print('--- Graph diagnostics ---')
   display_diagnostics(edges_per_node, distances, fit)
 }
-
-
-
 
 
 
@@ -174,11 +164,6 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_rat
   # }
 
 }
-
-
-
-
-
 
 
 avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
