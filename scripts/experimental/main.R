@@ -87,6 +87,7 @@ for (i in 1:n_days) {
 }
 
 print(history)
-
+diagnostics(graph, node_data)
+sample_diagnostics(graph, node_data, sample_ratio = 0.1)
 plotSIRJ(history, S=FALSE)
 plotHeatMap(node_data, from = 2)
