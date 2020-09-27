@@ -25,3 +25,24 @@ plotHeatMap<- function(obj, title="Heat map of infections", from=1) {
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
   print(d1)
 }
+
+plot.graph_diagnostics <- function(diag){
+  par(mfrow = c(1,2))
+  edges_hist = hist(diag$edges_per_node, plot=FALSE)
+  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
+  distance_hist = hist(diag$distances, plot=FALSE)
+  plot(distance_hist, main = 'Distances between connected nodes')
+}
+
+plot.diagnostic_history <- function(obj) {
+  par(mfrow=c(1,2))
+  x <- 0:(length(obj)-1)
+  avg_edges <- vector()
+  avg_dist <- vector()
+  for (i in 1:length(obj)) {
+    avg_edges[i] <- obj[[i]]$average_edges_connected_to_node
+    avg_dist[i] <- obj[[i]]$average_distance
+  }
+  plot(x, avg_edges, type='l', main='Average edges per node', xlab='days', ylab='edges')
+  plot(x, avg_dist, type='l', main='Average distance', xlab='days', ylab='distance (km)')
+}

@@ -164,14 +164,6 @@ print.graph_diagnostics <- function(diag){
 
 }
 
-plot.graph_diagnostics <- function(diag){
-  par(mfrow = c(1,2))
-  edges_hist = hist(diag$edges_per_node, plot=FALSE)
-  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
-  distance_hist = hist(diag$distances, plot=FALSE)
-  plot(distance_hist, main = 'Distances between connected nodes')
-}
-
 
 
 avg_edges <- function(graph, sample = FALSE, sample_ratio = 1){
