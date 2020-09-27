@@ -104,9 +104,10 @@ diagnostics <- function(graph, node_data, fit=FALSE){
   
   
   
-  for (main_node in explored){
+  for (i in 1:n){
+    main_node = explored[i]
     neighbors <- graph[[main_node]]
-    edges_per_node[main_node] = length(neighbors)
+    edges_per_node[i] = length(neighbors)
 
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
@@ -120,39 +121,6 @@ diagnostics <- function(graph, node_data, fit=FALSE){
 
 
 
-sample_diagnostics <- function(graph, node_data, sample_ratio, fit=FALSE){
-  n = length(graph)
-  n_sample <- as.integer(round(n*sample_ratio))
-  distances = vector()
-  edges_per_node = vector(length=n_sample)
-  
-  sampled_nodes = sample(1:n, n_sample)
-  
-  pb <- progress_bar$new(total = n_sample, format=" Diagnosing [:bar] :percent")
-  pb$tick(0)
-  
-  i = 1
-  for (main_node in sampled_nodes){
-    neighbors <- graph[[main_node]]
-    edges_per_node[i] = length(neighbors)
-    
-    reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
-    neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
-    distances <- c(distances, neighbor_distances)
-    pb$tick()
-    i = i+1
-    
-    
-  }
-  print('--- Estimated graph diagnostics ---')
-  display_diagnostics(edges_per_node, distances, fit, sample_ratio = sample_ratio)
-
-}
-
-
-
-
-
 
 
 
@@ -163,9 +131,7 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_rat
   
   # Remove 0 connected edges
   edges_per_node_filtered <- Filter(function(y) {y!=0}, edges_per_node)
-  n_isolated_nodes = length(edges_per_node)-length(edges_per_node_filtered)
-  
-  print(sprintf('Nodes: %d', n))
+  print(sprintf('Explored nodes: %d', length(edges_per_node)))
   
   if (sample_ratio != 1){
     total_edges = round(total_edges/sample_ratio)
@@ -174,7 +140,6 @@ display_diagnostics <- function(edges_per_node, distances, fit=FALSE, sample_rat
   print(sprintf('Edges: %d', total_edges))
   print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node))
   print(sprintf('Average distance between connected nodes: %.2f', average_distance))
-  print(sprintf("Isolated nodes: %d", n_isolated_nodes))
   print('See plots for histograms of edges and distances')
 
   par(mfrow = c(1,2))
