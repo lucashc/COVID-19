@@ -87,9 +87,12 @@ node_distance <- function(node_data, node1, node2){
 
 
 graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
+  S = FALSE
   if (0 %in% groups){
     warning("Including susceptible nodes drastically increases compute time", immediate. = TRUE)
+    S= TRUE
   }
+  
   if (all(groups == 1)){
     stop("Newly infected nodes do not have edges")
   }
@@ -98,8 +101,10 @@ graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
   distances = vector()
   
   edges_per_node = vector(length=n)
-  pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
-  pb$tick(0)
+  if (S){
+    pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
+    pb$tick(0)
+  }
   
   
   
@@ -111,7 +116,7 @@ graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
     distances <- c(distances, neighbor_distances)
-    pb$tick()
+    if (S){pb$tick()}
   }
   
   average_edges_connected_to_node <- mean(edges_per_node) # double counting is desired in this case

@@ -31,7 +31,7 @@ plot.graph_diagnostics <- function(diag){
   edges_hist = hist(diag$edges_per_node, plot=FALSE)
   plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
   distance_hist = hist(diag$distances, plot=FALSE)
-  plot(distance_hist, main = 'Distances between connected nodes')
+  plot(distance_hist, main = 'Distances between connected nodes', xlab = "distance (km)")
 }
 
 plot.diagnostic_history <- function(obj) {
