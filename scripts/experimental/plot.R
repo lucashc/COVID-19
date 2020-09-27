@@ -2,7 +2,8 @@ source('./scripts/experimental/geodata.R')
 library(ggplot2)
 library(reshape2)
 
-plotSIRJ <- function(history, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
+plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
+  history <- obj$history
   vars <- c('S', 'I', 'R', 'J')[c(S, I, R, J)]
   print(vars)
   mhist <- melt(history, id='day', measure.vars = vars)
@@ -12,7 +13,8 @@ plotSIRJ <- function(history, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE)
   fig
 }
 
-plotHeatMap<- function(node_data, title="Heat map of infections", from=1) {
+plotHeatMap<- function(obj, title="Heat map of infections", from=1) {
+  node_data <- obj$node_data
   raw_data <- node_data[node_data$status == 2, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
