@@ -9,7 +9,7 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   names(mhist) <- c('day', 'casetype', 'cases')
   fig <- ggplot(mhist, aes(x=day, y=cases, color=casetype)) + geom_line() + labs(title=title, x='days', y='cases')
   print(fig)
-  fig
+  #fig
 }
 
 plotHeatMap<- function(obj, title="Heat map of infections", from=1) {
@@ -26,23 +26,33 @@ plotHeatMap<- function(obj, title="Heat map of infections", from=1) {
   print(d1)
 }
 
-plot.graph_diagnostics <- function(diag){
+plot.graph_diagnostics <- function(diag, ignore_zero_degree = FALSE) {
+  edges_per_node = diag$edges_per_node
+  if (ignore_zero_degree){
+    edges_per_node = edges_per_node[which(edges_per_node>0)]
+  }
+  distances = diag$distances
+  
   par(mfrow = c(1,2))
-  edges_hist = hist(diag$edges_per_node, plot=FALSE)
-  plot(edges_hist, main = 'Edges connected to a node', xlab = "edges connected to node")
-  distance_hist = hist(diag$distances, plot=FALSE)
-  plot(distance_hist, main = 'Distances between connected nodes', xlab = "distance (km)")
+
+  hist(edges_per_node, main = 'Node degree', xlab = "degree")
+  
+  hist(distances, main = 'Distances between connected nodes', xlab = "distance (km)")
 }
+
+
+
+
 
 plot.diagnostic_history <- function(obj) {
   par(mfrow=c(1,2))
   x <- 0:(length(obj)-1)
-  avg_edges <- vector()
+  avg_degree <- vector()
   avg_dist <- vector()
   for (i in 1:length(obj)) {
-    avg_edges[i] <- obj[[i]]$average_edges_connected_to_node
+    avg_degree[i] <- obj[[i]]$average_degree
     avg_dist[i] <- obj[[i]]$average_distance
   }
-  plot(x, avg_edges, type='l', main='Average edges per node', xlab='days', ylab='edges')
+  plot(x, avg_degree, type='l', main='Average degree of nodes', xlab='days', ylab='degree')
   plot(x, avg_dist, type='l', main='Average distance', xlab='days', ylab='distance (km)')
 }

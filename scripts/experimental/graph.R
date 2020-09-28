@@ -1,13 +1,13 @@
-library(MASS)
 library(progress)
+library(MASS)
 source("./scripts/experimental/geodata.R")
 
 generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
   # Status codes
-  # S: 0
-  # J: 1
-  # I: 2
-  # R: 3
+  # S: 0  (susceptible)
+  # J: 1  (newly infected)
+  # I: 2  (infected but not J)
+  # R: 3  (recovered)
   sample = geo.sample(n, accuracy)
   x <- sample$x
   y <- sample$y
@@ -119,10 +119,10 @@ graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
     if (S){pb$tick()}
   }
   
-  average_edges_connected_to_node <- mean(edges_per_node) # double counting is desired in this case
+  average_degree <- mean(edges_per_node) # double counting is desired in this case
   average_distance <- mean(distances)
   
-  diag <- list(edges_per_node = edges_per_node, distances = distances, average_distance = average_distance, average_edges_connected_to_node = average_edges_connected_to_node)
+  diag <- list(edges_per_node = edges_per_node, distances = distances, average_distance = average_distance, average_degree = average_degree)
   class(diag) <- "graph_diagnostics"
   
   return(diag)
@@ -134,7 +134,7 @@ print.graph_diagnostics <- function(diag){
   edges_per_node = diag$edges_per_node
   distances = diag$distances
   average_distance = diag$average_distance
-  average_edges_connected_to_node = diag$average_edges_connected_to_node
+  average_degree = diag$average_degree
   
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
@@ -143,31 +143,34 @@ print.graph_diagnostics <- function(diag){
   print(sprintf('Explored nodes: %d', length(edges_per_node)), quote=FALSE)
   
   print(sprintf('Edges: %d', total_edges), quote=FALSE)
-  print(sprintf('Average edges connected to node: %.2f', average_edges_connected_to_node), quote=FALSE)
+  print(sprintf('Average degree of nodes: %.2f', average_degree), quote=FALSE)
   print(sprintf('Average distance between connected nodes: %.2f', average_distance), quote=FALSE)
+}
 
- 
-  # if (fit){
-  #   fitparams = fitdistr(edges_per_node_filtered, "poisson")
-  #   xas = 1:max(edges_per_node)
-  #   lines(xas, dpois(xas, fitparams$estimate))
-  #   print('Poisson parameters for #edges:')
-  #   print(fitparams$estimate['lambda'])
-  # }
-  
-  
 
+
+fit_diagnostics <- function(diag) {
+  print("---Fit parameters---", quote=FALSE)
+  edges_per_node = diag$edges_per_node
+  distances = diag$distances
   
+  par(mfrow = c(1,2))
   
-  # if (fit){
-  #   fitparams = fitdistr(distances, "exponential")
-  #   xas = seq(0, max(distances), l=1000)
-  #   lines(xas, dexp(xas, fitparams$estimate))
-  #   print(fitparams$estimate)
-  #   print(sprintf('Exponential parameter for distances: %.2f', fitparams$estimate))
-  # }
+  filtered_edges_per_node = edges_per_node[which(edges_per_node > 0)]
+  hist(filtered_edges_per_node, main = 'Node degree', xlab = "degree", probability = TRUE)
+  fitparams <- fitdistr(filtered_edges_per_node, "poisson")
+  xas <- 1:max(edges_per_node)
+  lines(xas, dpois(xas, fitparams$estimate))
+  print(sprintf('Poisson parameter for node degree: %.2f', fitparams$estimate), quote=FALSE)
+  
+  hist(distances, main = 'Distances between connected nodes', xlab = "distance (km)", probability = TRUE)
+  fitparams <- fitdistr(distances, "exponential")
+  xas <- seq(0, max(distances), l=1000)
+  lines(xas, dexp(xas, fitparams$estimate))
+  print(sprintf('Exponential parameter for distances: %.4f', fitparams$estimate), quote = FALSE)
 
 }
+
 
 
 
