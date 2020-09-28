@@ -18,6 +18,16 @@ generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), r
   return(node_data)
 }
 
+generate_simple_node_data <- function(n, weights=rep.int(1,n), accuracy = 1000) {
+  sample = geo.sample(n, accuracy)
+  x <- sample$x
+  y <- sample$y
+  y <- max(y) - y
+  node_data <- data.frame(weights, x, y)
+  names(node_data) <- c('weight', 'x', 'y')
+  return(node_data)
+}
+
 
 generate_empty_graph <- function(n){
   graph <- list()
