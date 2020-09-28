@@ -96,7 +96,7 @@ node_distance <- function(node_data, node1, node2){
 
 
 
-graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
+graph_diagnostics <- function(graph, node_data, groups = c(2,3), fit=FALSE){
   S = FALSE
   if (0 %in% groups){
     warning("Including susceptible nodes drastically increases compute time", immediate. = TRUE)
@@ -106,7 +106,13 @@ graph_diagnostics <- function(graph, node_data, groups = c(1,2,3), fit=FALSE){
   if (all(groups == 1)){
     stop("Newly infected nodes do not have edges")
   }
-  explored = which(node_data$status %in% groups) 
+  
+  explored = which(node_data$status %in% groups)
+  if (length(explored) == 0) {
+    diag <- list(edges_per_node = vector(), distances = vector(), average_distance = 0, average_degree = 0)
+    class(diag) <- "graph_diagnostics"
+    return(diag)
+  }
   n = length(explored)
   distances = vector()
   
