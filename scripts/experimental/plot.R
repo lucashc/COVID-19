@@ -12,7 +12,8 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startnode_data = NULL) {
+plotHeatMap<- function(obj, title="Heat map of infections", from=1, start_nodes = FALSE) {
+  node_data = obj$node_data
   raw_data <- node_data[node_data$status == from, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
@@ -21,7 +22,8 @@ plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startn
   d1 <- ggplot()
   d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
   d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²', na.value='#FFFFFF00')
-  if (!is.null(startnode_data)) {
+  if (start_nodes) {
+    startnode_data = obj$startnode_data
     d1 <- d1 + geom_point(data=startnode_data[startnode_data$status == 1, c('x', 'y')], aes(x,y, alpha=""), color='pink') 
     d1 <- d1 + scale_alpha_manual(values=1) + labs(alpha='initially infected')
   }
@@ -45,16 +47,17 @@ plotNodes <- function(node_data, title="Infections", from=1) {
 
 
 plot.graph_diagnostics <- function(diag, ignore_zero_degree = FALSE) {
-  edges_per_node = diag$edges_per_node
+  edges_per_node <- diag$edges_per_node
   if (ignore_zero_degree){
-    edges_per_node = edges_per_node[which(edges_per_node>0)]
+    edges_per_node <- edges_per_node[which(edges_per_node>0)]
   }
-  distances = diag$distances
+  distances <- diag$distances
   
-  par(mfrow = c(1,2))
-
-  hist(edges_per_node, main = 'Node degree', xlab = "degree")
+  par(mfrow = c(1,3))
   
+  edges_minus_outliers <- edges_per_node[which(edges_per_node < quantile(edges_per_node, .99))]
+  hist(edges_minus_outliers, main = 'Node degree', xlab = "degree", breaks = max(edges_minus_outliers))
+  boxplot(edges_per_node, main = 'Boxplot of node degrees')
   hist(distances, main = 'Distances between connected nodes', xlab = "distance (km)")
 }
 
