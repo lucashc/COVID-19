@@ -12,8 +12,8 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap<- function(node_data, title="Heat map of infections", from=1) {
-  raw_data <- node_data[node_data$status == 2, c('x', 'y')]
+plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startnode_data = NULL) {
+  raw_data <- node_data[node_data$status == from, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
   geo <- geo*0
@@ -22,8 +22,25 @@ plotHeatMap<- function(node_data, title="Heat map of infections", from=1) {
   d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
   d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²')
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
+  if (!is.null(startnode_data)) {
+    d1 <- d1+geom_point(data=startnode_data[startnode_data$status == 1, c('x', 'y')], aes(x,y), color='pink')
+  }
   print(d1)
 }
+
+plotNodes <- function(node_data, title="Heat map of infections", from=1) {
+  raw_data <- node_data[node_data$status == from, c('x', 'y')]
+  geo <- geo.getMask()
+  geo <- t(apply(geo, 2, rev))
+  geo <- geo*0
+  jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+  d1 <- ggplot()
+  d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
+  d1 <- d1 + geom_point(data=raw_data, aes(x, y))
+  d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
+  print(d1)
+}
+
 
 plot.graph_diagnostics <- function(diag, ignore_zero_degree = FALSE) {
   edges_per_node = diag$edges_per_node
