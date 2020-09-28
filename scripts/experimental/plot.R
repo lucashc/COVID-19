@@ -12,8 +12,7 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap<- function(obj, title="Heat map of infections", from=1) {
-  node_data <- obj$node_data
+plotHeatMap<- function(node_data, title="Heat map of infections", from=1) {
   raw_data <- node_data[node_data$status == 2, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
