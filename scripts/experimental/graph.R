@@ -2,6 +2,11 @@ library(progress)
 library(MASS)
 source("./scripts/experimental/geodata.R")
 
+printnq<- function(...){
+  print(sprintf(...), quote=FALSE)
+}
+
+
 generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
   # Status codes
   # S: 0  (susceptible)
@@ -155,36 +160,48 @@ print.graph_diagnostics <- function(diag){
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
   # Remove 0 connected edges
-  print('--- Graph diagnostics ---', quote=FALSE)
-  print(sprintf('Explored nodes: %d', length(edges_per_node)), quote=FALSE)
+  printnq('--- Graph diagnostics ---')
+  printnq(sprintf('Explored nodes: %d', length(edges_per_node)))
   
-  print(sprintf('Edges: %d', total_edges), quote=FALSE)
-  print(sprintf('Average degree of nodes: %.2f', average_degree), quote=FALSE)
-  print(sprintf('Average distance between connected nodes: %.2f', average_distance), quote=FALSE)
+  printnq('Edges: %d', total_edges)
+  printnq("Node degree")
+  printnq('- Mean: %.2f',average_degree)
+  printnq('- Std. dev: %.2f', var(edges_per_node)^0.5)
+                
+  printnq('Distance between connected nodes')
+  printnq('- Mean: %.2f', average_distance)
+  printnq('- Std. dev: %.2f', var(distances)^0.5)
+  printnq('-------------------------')
 }
 
 
 
 fit_diagnostics <- function(diag) {
-  print("---Fit parameters---", quote=FALSE)
-  edges_per_node = diag$edges_per_node
+  
+  edges_per_node <- diag$edges_per_node
+  edges_minus_outliers <- edges_per_node[which(edges_per_node < quantile(edges_per_node, .99))]
+  degree_hist <- hist(edges_minus_outliers, breaks = max(edges_minus_outliers), probability = TRUE)
+  degree_hist$probability <- TRUE
+  if (degree_hist$counts[1] > degree_hist$counts[2]){
+    warning("You probably included newly infected and/or susceptible people in your diagnostics. This causes inaccurate fitting for the node degree.", immediate. = TRUE)
+  }
+    
   distances = diag$distances
   
+  printnq("--- Fit parameters ---")
   par(mfrow = c(1,2))
-  
-  filtered_edges_per_node = edges_per_node[which(edges_per_node > 0)]
-  hist(filtered_edges_per_node, main = 'Node degree', xlab = "degree", probability = TRUE)
-  fitparams <- fitdistr(filtered_edges_per_node, "poisson")
+  hist(edges_minus_outliers, breaks = max(edges_minus_outliers), probability = TRUE, main = 'Node degree', xlab = "degree")
+  fitparams <- fitdistr(edges_minus_outliers, "poisson")
   xas <- 1:max(edges_per_node)
   lines(xas, dpois(xas, fitparams$estimate))
-  print(sprintf('Poisson parameter for node degree: %.2f', fitparams$estimate), quote=FALSE)
+  printnq('Poisson parameter for node degree: %.2f', fitparams$estimate)
   
   hist(distances, main = 'Distances between connected nodes', xlab = "distance (km)", probability = TRUE)
   fitparams <- fitdistr(distances, "exponential")
   xas <- seq(0, max(distances), l=1000)
   lines(xas, dexp(xas, fitparams$estimate))
-  print(sprintf('Exponential parameter for distances: %.4f', fitparams$estimate), quote = FALSE)
-
+  printnq('Exponential parameter for distances: %.4f', fitparams$estimate)
+  printnq('----------------------')
 }
 
 

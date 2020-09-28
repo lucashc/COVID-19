@@ -43,16 +43,17 @@ plotNodes <- function(node_data, title="Heat map of infections", from=1) {
 
 
 plot.graph_diagnostics <- function(diag, ignore_zero_degree = FALSE) {
-  edges_per_node = diag$edges_per_node
+  edges_per_node <- diag$edges_per_node
   if (ignore_zero_degree){
-    edges_per_node = edges_per_node[which(edges_per_node>0)]
+    edges_per_node <- edges_per_node[which(edges_per_node>0)]
   }
-  distances = diag$distances
+  distances <- diag$distances
   
-  par(mfrow = c(1,2))
-
-  hist(edges_per_node, main = 'Node degree', xlab = "degree")
+  par(mfrow = c(1,3))
   
+  edges_minus_outliers <- edges_per_node[which(edges_per_node < quantile(edges_per_node, .99))]
+  hist(edges_minus_outliers, main = 'Node degree', xlab = "degree", breaks = max(edges_minus_outliers))
+  boxplot(edges_per_node, main = 'Boxplot of node degrees')
   hist(distances, main = 'Distances between connected nodes', xlab = "distance (km)")
 }
 
