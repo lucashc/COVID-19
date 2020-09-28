@@ -20,23 +20,25 @@ plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startn
   jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
   d1 <- ggplot()
   d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
-  d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²')
-  d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
+  d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²', na.value='#FFFFFF00')
   if (!is.null(startnode_data)) {
-    d1 <- d1+geom_point(data=startnode_data[startnode_data$status == 1, c('x', 'y')], aes(x,y), color='pink')
+    d1 <- d1 + geom_point(data=startnode_data[startnode_data$status == 1, c('x', 'y')], aes(x,y, alpha=""), color='pink') 
+    d1 <- d1 + scale_alpha_manual(values=1) + labs(alpha='initially infected')
   }
+  d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
   print(d1)
 }
 
-plotNodes <- function(node_data, title="Heat map of infections", from=1) {
-  raw_data <- node_data[node_data$status == from, c('x', 'y')]
+plotNodes <- function(node_data, title="Infections", from=1) {
+  raw_data <- node_data[node_data$status == from, c('x', 'y', 'status')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
   geo <- geo*0
+  status_name <- c('susceptible', 'newly infected', 'infected', 'recovered')[from+1]
   jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
   d1 <- ggplot()
-  d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
-  d1 <- d1 + geom_point(data=raw_data, aes(x, y))
+  d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value), show.legend=FALSE) + scale_fill_gradient(low='grey', high='grey', na.value='#FFFFFF00')
+  d1 <- d1 + geom_point(data=raw_data, aes(x, y, color=factor(status))) + scale_color_discrete(name='status', labels=c(status_name))
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
   print(d1)
 }
