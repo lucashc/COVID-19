@@ -37,6 +37,7 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   if (monitor) {
     diagnostic_history <- list()
     diagnostic_history[[1]] <- graph_diagnostics(graph, node_data)
+    startnode_data <- node_data
     class(diagnostic_history) <- "diagnostic_history"
   }
   
@@ -96,6 +97,7 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   class(result) <- "simulation_results"
   if (monitor) {
     result$diagnostic_history <- diagnostic_history
+    result$startnode_data <- startnode_data
   }
   return(result)
 }
