@@ -1,6 +1,7 @@
 source('./scripts/experimental/graph.R')
 library(progress)
 library(parallel)
+library(EnvStats)
 # Steps for simulation
 # 1. Initalize graph, set states
 # 2. Timestep
@@ -21,9 +22,16 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE) {
-
-  node_data <- generate_node_data(n, recovery_time=rep.int(0,n))
+simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, beta = -1) {
+  
+  if (beta == -1){
+    weights = rep(1,n)
+  }else{
+    x_m = (beta-1)/beta
+    weights = rpareto(n, x_m, beta)
+  }
+  
+  node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights)
   graph <- generate_empty_graph(n)
   recoverytime <- 1 + rpois(n, lpois)
   
