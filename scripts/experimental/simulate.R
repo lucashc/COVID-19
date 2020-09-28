@@ -22,14 +22,7 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, beta = -1) {
-  
-  if (beta == -1){
-    weights = rep(1,n)
-  }else{
-    x_m = (beta-1)/beta
-    weights = rpareto(n, x_m, beta)
-  }
+simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n)) {
   
   node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights)
   graph <- generate_empty_graph(n)
