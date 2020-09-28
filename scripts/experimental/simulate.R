@@ -13,7 +13,7 @@ set.seed(1)
 # Check if Windows or Linux
 if (.Platform$OS.type == "unix") {
   # Parallel execution works
-  ncores <- 4
+  ncores <- 8
   print("Running on UNIX, enable multi core support")
 }else {
   ncores <- 1
@@ -81,6 +81,15 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     if (monitor) {
       diagnostic_history[[i+1]] <- graph_diagnostics(graph, node_data)
     }
+    # Try garbage collection each loop
+    rm(susceptible)
+    rm(newlyinfected)
+    rm(statusI)
+    rm(statusR)
+    rm(infneighs)
+    rm(infected)
+    rm(new_n_inf)
+    rm(old_n_inf)
   }
   result <- list(graph=graph, node_data=node_data, history=history, diagnostic_history=NULL)
   class(result) <- "simulation_results"
