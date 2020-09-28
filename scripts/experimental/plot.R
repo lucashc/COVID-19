@@ -12,7 +12,8 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startnode_data = NULL) {
+plotHeatMap<- function(obj, title="Heat map of infections", from=1, start_nodes = FALSE) {
+  node_data = obj$node_data
   raw_data <- node_data[node_data$status == from, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
@@ -22,7 +23,8 @@ plotHeatMap<- function(node_data, title="Heat map of infections", from=1, startn
   d1 <- d1 + geom_tile(data=melt(geo), mapping=aes(x=Var1, y=Var2, fill=value))
   d1 <- d1 + geom_bin2d(data=raw_data, aes(x, y), binwidth=10) + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²')
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
-  if (!is.null(startnode_data)) {
+  if (start_nodes) {
+    startnode_data = obj$startnode_data
     d1 <- d1+geom_point(data=startnode_data[startnode_data$status == 1, c('x', 'y')], aes(x,y), color='pink')
   }
   print(d1)
