@@ -8,5 +8,6 @@ install.packages(c(
   "ggplot2",
   "profvis",
   "reshape2",
-  "MASS"
+  "MASS",
+  "parallel"
 ))
