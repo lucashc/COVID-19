@@ -24,3 +24,4 @@ plotHeatMap(result, start_nodes = TRUE)
 
 # Save results from run
 save_result(result, prefix='Initial spread')
+print(result)
