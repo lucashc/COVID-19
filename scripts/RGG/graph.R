@@ -1,6 +1,6 @@
 library(progress)
 library(MASS)
-source("./scripts/experimental/geodata.R")
+source("./scripts/RGG/geodata.R")
 
 printnq<- function(...){
   print(sprintf(...), quote=FALSE)

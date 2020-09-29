@@ -1,4 +1,4 @@
-source('./scripts/experimental/graph.R')
+source('./scripts/RGG/graph.R')
 library(bench)
 
 n <- 1000

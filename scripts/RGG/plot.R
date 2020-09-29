@@ -1,4 +1,4 @@
-source('./scripts/experimental/geodata.R')
+source('./scripts/RGG/geodata.R')
 library(ggplot2)
 library(reshape2)
 

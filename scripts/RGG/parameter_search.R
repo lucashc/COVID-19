@@ -1,4 +1,4 @@
-source('./scripts/experimental/graph.R')
+source('./scripts/RGG/graph.R')
 library(progress)
 library(parallel)
 
@@ -8,7 +8,7 @@ set.seed(1)
 ncores = 8
 
 search <- function(n, sample_size, lambda, alpha, node_data = NA) {
-  if (is.na(node_data)){node_data <- generate_simple_node_data(n)}
+  if (is.na(node_data)){node_data <- generate_simple_node_data(n, weights = rpareto(n, 3/4, 4))}
   
   sampled = sample(nrow(node_data), sample_size)
   
@@ -55,5 +55,5 @@ find_lambda <- function(n, alpha, sample_size, step=1, shots = 10, target = 7.95
 #   lambdas$lambda[i] = find_lambda(lambdas$n[i], 0.5, lambdas$n[i])
 # }
 # print(lambdas)
-
-find_lambda(1e5, 0.5, 1e4, 0.02)
+print("Starting")
+print(find_lambda(1e6, 0.5, 1e4, 0.002))

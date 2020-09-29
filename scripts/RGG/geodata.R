@@ -4,9 +4,9 @@ library(spatstat)
 geo.load <- function(accuracy=1000) {
   # Returns density as matrix
   if (accuracy == 250) {
-    X<- raster('popdens250.tif')
+    X<- raster('./data/popdens250.tif')
   }else{
-    X <- raster('popdens.tif')
+    X <- raster('./data/popdens.tif')
   }
   X[is.na(X)] <- 0
   return(as.matrix(X))
@@ -32,6 +32,6 @@ geo.sample <- function(n=1000, accuracy=1000, verify=FALSE) {
 }
 
 geo.getMask <- function() {
-  X <- raster('germany.tif')
+  X <- raster('./data/germany.tif')
   return(as.matrix(X))
 }
