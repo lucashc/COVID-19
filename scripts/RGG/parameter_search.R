@@ -21,7 +21,7 @@ search <- function(n, sample_size, lambda, alpha, node_data = NA) {
 }
 
 average_avg_edges <- function(alpha, n, lambda, sample_size, shots = 5, accuracy = 1000) {
-  node_data = generate_simple_node_data(n)
+  node_data = generate_simple_node_data(n, weights = rpareto(n, 3/4, 4))
   x = replicate(shots, search(n, sample_size, lambda, alpha, node_data))
   print(sprintf("variance: %f", var(x)))
   return(mean(x))
@@ -35,7 +35,7 @@ find_lambda <- function(n, alpha, sample_size, step=1, shots = 10, target = 7.95
     guess = average_avg_edges(alpha, n, step, sample_size, shots, accuracy)
     print(sprintf("guess: %.2f", guess))
   }
-  while(abs(guess - target) > 0.1) {
+  while(abs(guess - target) > 0.01) {
     step = step/2
     guess = average_avg_edges(alpha, n, lambda + step, sample_size, shots, accuracy)
     if (guess < target) {
