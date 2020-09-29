@@ -22,7 +22,7 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n)) {
+simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE) {
   
   node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights)
   graph <- generate_empty_graph(n)
@@ -39,6 +39,11 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     diagnostic_history[[1]] <- graph_diagnostics(graph, node_data)
     startnode_data <- node_data
     class(diagnostic_history) <- "diagnostic_history"
+  }
+  
+  if (record_infected) {
+    record <- list()
+    record[[1]] <- node_data[node_data$status == c(1,2), c('status', 'x', 'y')]
   }
   
   # 2
@@ -83,6 +88,9 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     if (monitor) {
       diagnostic_history[[i+1]] <- graph_diagnostics(graph, node_data)
     }
+    if (record_infected) {
+      record[[i+1]] <- node_data[node_data$status == c(1,2), c('status', 'x', 'y')]
+    }
     # Try garbage collection each loop
     rm(susceptible)
     rm(newlyinfected)
@@ -98,6 +106,9 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   if (monitor) {
     result$diagnostic_history <- diagnostic_history
     result$startnode_data <- startnode_data
+  }
+  if (record_infected) {
+    result$record <- record
   }
   result$settings <- list(n=n, initial_infections=initial_infections, n_days=n_days, infection_prob=infection_prob, lambda=lambda, alpha=alpha, lpois=lpois)
   return(result)
