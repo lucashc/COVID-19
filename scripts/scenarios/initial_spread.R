@@ -1,12 +1,14 @@
 source("./scripts/RGG/source.R")
 library(EnvStats)
 
-result <- simulate(n = 1e6, 
+n = 1e6
+
+result <- simulate(n = n, 
                    monitor = TRUE, 
                    weights = rpareto(n, 3/4, 4),
                    lambda = 0.00128125, # Found with binary search
                    n_days = 20, 
-                   infection_prob = 0.0125,
+                   infection_prob = 0.02,
                    lpois = 14,
                    initial_infections = 25
                    )
