@@ -98,6 +98,7 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
   if (monitor) {
     result$diagnostic_history <- diagnostic_history
     result$startnode_data <- startnode_data
+    result$settings <- list(n=n, initial_infections=initial_infections, n_days=n_days, infection_prob=infection_prob, lambda=lambda, alpha=alpha, lpois=lpois)
   }
   return(result)
 }
