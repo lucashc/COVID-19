@@ -29,3 +29,6 @@ vignettes/*.pdf
 *.Rproj
 scripts/local-settings.R
 .Rproj.user
+
+# History directory
+history/
