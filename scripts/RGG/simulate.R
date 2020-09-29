@@ -114,7 +114,7 @@ print.simulation_results <- function(result) {
                   result$settings$alpha,
                   result$settings$lpois))
   printnq("At the last day there were: ")
-  last <- result$history[length(result$history),]
+  last <- result$history[length(result$history$day),]
   printnq(sprintf("- %d new infections", last$J))
   printnq(sprintf("- %d infections", last$I))
   printnq(sprintf("- %d recovered", last$R))
