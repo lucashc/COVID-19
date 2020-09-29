@@ -9,5 +9,6 @@ install.packages(c(
   "profvis",
   "reshape2",
   "MASS",
-  "parallel"
+  "parallel",
+  "EnvStats"
 ))

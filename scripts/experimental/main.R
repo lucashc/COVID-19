@@ -1,5 +1,4 @@
-source('scripts/experimental/simulate.R')
-source('./scripts/experimental/plot.R')
+source("./scripts/experimental/source.R")
 library(EnvStats)
 
 n <- 1e6
@@ -17,4 +16,5 @@ plot(result$diagnostic_history)
 
 plotSIRJ(result, S=FALSE)
 plotHeatMap(result, start_nodes = TRUE)
+
 
