@@ -8,7 +8,7 @@ result <- simulate(n = n,
                    weights = rpareto(n, 3/4, 4),
                    lambda = 0.00128125, # Found with binary search
                    n_days = 20, 
-                   infection_prob = 0.02,
+                   infection_prob = 0.023,
                    lpois = 14,
                    initial_infections = 25
                    )
@@ -24,4 +24,5 @@ plotHeatMap(result, start_nodes = TRUE)
 
 # Save results from run
 save_result(result, prefix='Initial spread')
-print(result)
+# Print day before last
+print(result$history[length(result$history$day)-1,])
