@@ -99,5 +99,32 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     result$diagnostic_history <- diagnostic_history
     result$startnode_data <- startnode_data
   }
+  result$settings <- list(n=n, initial_infections=initial_infections, n_days=n_days, infection_prob=infection_prob, lambda=lambda, alpha=alpha, lpois=lpois)
   return(result)
+}
+
+print.simulation_results <- function(result) {
+  printnq("--- Simulation Results ---")
+  printnq(sprintf("Network size: %d", result$settings$n))
+  printnq(sprintf("Simulation ran for %d days", result$settings$n_days))
+  printnq(sprintf("Simulation started with %d infections", result$settings$initial_infections))
+  printnq(sprintf("Settings: infprob %f, lambda %f, alpha %f, lpois %f",
+                  result$settings$infection_prob,
+                  result$settings$lambda,
+                  result$settings$alpha,
+                  result$settings$lpois))
+  printnq("At the last day there were: ")
+  last <- result$history[length(result$history),]
+  printnq(sprintf("- %d new infections", last$J))
+  printnq(sprintf("- %d infections", last$I))
+  printnq(sprintf("- %d recovered", last$R))
+  percentage_in_contact <- sum(last[c('I', 'R', 'J')])/n*100
+  printnq(sprintf("Percentage of people in contact with virus: %f", percentage_in_contact))
+  printnq("Graph diagnostics of last day: ")
+  if(exists("result$diagnostic_history")) {
+    print(result$diagnostic_history[length(result$diagnostic_history)])
+  }else {
+    print(graph_diagnostics(result$graph, result$node_data))
+  }
+  printnq('-------------------------')
 }
