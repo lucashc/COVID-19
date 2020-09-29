@@ -9,7 +9,7 @@ library(EnvStats)
 # 2b. Make new edges if necessary
 
 # Make reproducible
-set.seed(1)
+# set.seed(1)
 
 # Check if Windows or Linux
 if (.Platform$OS.type == "unix") {
