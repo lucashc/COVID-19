@@ -17,3 +17,8 @@ The features supported are:
 First of all install the required R packages. This can be done by running `install.R`, which installs the required packages. On Windows this should pull other binary dependencies, but for UNIX like systems, one should install at least: `gcc`, `gcc-fortran` and `gdal` to build them on demand.
 
 The main code for RGG's is contained in the `scripts/RGG` folder. To run a scenario, head over to the `scripts/scenarios`-directory. Here one can run a simulation by using an RGG. See an example for the paremeters that can be set. In addition, the software supports multi-core machines by way of forking. This greatly improves simulations. However, this is only available on UNIX like systems, as Windows does not offer such a kernel call. For 8 concurrent processes at 1 million nodes it is advised to have 16 GB of RAM. 
+
+# Data used:
+* RKI data: [RKI dataset](https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0)
+* Population density tiles: [European Commission](https://ghsl.jrc.ec.europa.eu/download.php?ds=pop)
+* Territories in vector format: [Natural Earth](http://www.naturalearth.com/http//www.naturalearth.com/download/10m/culturalne_10m_admin_0_countries.zip)
