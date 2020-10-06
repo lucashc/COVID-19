@@ -4,14 +4,15 @@ infsAt20 = c()
 recAt20 = c()
 newAt20 = c()
 n = 1e6
-RUNS = 20
+RUNS = 100
 for (i in (1:RUNS)){
+  print(i)
   result <- simulate(n = n, 
                      monitor = FALSE, 
                      weights = rpareto(n, 3/4, 4),
                      lambda = 0.00128125, # Found with binary search
                      n_days = 20, 
-                     infection_prob = 0.02,
+                     infection_prob = 0.0249,
                      lpois = 14,
                      initial_infections = 25
   )
