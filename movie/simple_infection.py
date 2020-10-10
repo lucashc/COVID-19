@@ -1,12 +1,14 @@
 from manim import *
+from movie.presets import *
 
 class Graph(Scene):
     def construct(self):
-        infected = Circle(color=RED, radius=0.3)
-        susceptible = Circle(color=BLUE, arc_center=2*UP + 2*RIGHT, radius=0.3)
-        newly_infected = Circle(color=RED, arc_center=2*UP + 2*RIGHT, radius=0.3)
-        line = Line(0.22*UP + 0.22*RIGHT, 1.78*UP + 1.78*RIGHT)
-        red_line = Line(0.22*UP + 0.22*RIGHT, 1.78*UP + 1.78*RIGHT, color=RED)
+        infected = Node('I', style='filled')  # added 2 styles, hollow (default) and filled.
+        susceptible = Node('S', location=2 * UP + 2 * RIGHT)
+        newly_infected = Node('I', location=2 * UP + 2 * RIGHT)
+        line = Edge(infected, susceptible)
+        red_line = Edge(infected, susceptible, color=I_COLOR)
+
         self.play(FadeIn(infected))
         self.play(FadeIn(susceptible))
         self.wait(0.5)
@@ -16,10 +18,9 @@ class Graph(Scene):
         self.play(ShowCreation(red_line))
         self.wait()
         self.play(Transform(susceptible, newly_infected))
+        self.remove(red_line)
         self.wait(1)
-        # self.play(FadeOutAndShift(infected))
-        # self.play(FadeOutAndShift(line))
-        # self.play(FadeOutAndShift(susceptible))
-        # self.wait()
+        self.play(FadeOutAndShift(infected), FadeOutAndShift(line), FadeOutAndShift(susceptible))
+        self.wait()
 
 

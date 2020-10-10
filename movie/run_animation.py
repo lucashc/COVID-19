@@ -1,6 +1,7 @@
 import os
 
-# NOTE: make sure to close the python file containing the manim code
+# If it complains about files not existing, remove the partial_movie_files for that file.
+# It seems it sometimes expects a cached file that does not exist. Don't know how to fix.
 
 # SETTINGS #
 file = 'simple_infection'       # must be in same folder
