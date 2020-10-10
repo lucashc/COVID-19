@@ -70,7 +70,7 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
       neighbours <- graph[[node]]
       susneighs <- neighbours[which(node_data[neighbours,"status"] == 0)]
       return(susneighs[runif(length(susneighs)) < infection_prob])
-    },infected))
+    },infected, SIMPLIFY = FALSE))
 
     node_data[infneighs,"status"] <- 1
     node_data[infneighs,"recovery_time"] <- i + recoverytime[infneighs]
