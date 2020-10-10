@@ -22,9 +22,9 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE) {
+simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE, sample=NULL) {
   
-  node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights)
+  node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights, sample=sample)
   graph <- generate_empty_graph(n)
   recoverytime <- 1 + rpois(n, lpois)
   
