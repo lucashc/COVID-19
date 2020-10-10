@@ -1,6 +1,4 @@
 from manim import *
-from manim.constants import *
-
 
 class Graph(Scene):
     def construct(self):
@@ -18,5 +16,10 @@ class Graph(Scene):
         self.play(ShowCreation(red_line))
         self.wait()
         self.play(Transform(susceptible, newly_infected))
+        self.wait(1)
+        # self.play(FadeOutAndShift(infected))
+        # self.play(FadeOutAndShift(line))
+        # self.play(FadeOutAndShift(susceptible))
+        # self.wait()
 
-# python -m manim simple_infection.py Graph -p  to run
+
