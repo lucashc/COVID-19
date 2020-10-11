@@ -6,6 +6,8 @@ I_COLOR = RED  # '#EE0A0A' # this color is maybe too bright
 S_COLOR = '#0AACEE'
 R_COLOR = '#0DEE0A'
 J_COLOR = '#EE9B0A'
+INERT_EDGE_COLOR = WHITE
+INFECTING_EDGE_COLOR = I_COLOR
 color_dict = {'S': S_COLOR, 'I': I_COLOR, 'R': R_COLOR, 'J': J_COLOR}
 
 class Node(Circle):
@@ -13,6 +15,7 @@ class Node(Circle):
         self.status = status
         self.location = location
         self.radius = radius
+        self.style = style
         if style == 'hollow':
             self.style_dict = {'color': color_dict[status]}
         elif style == 'filled':
@@ -21,17 +24,46 @@ class Node(Circle):
 
         Circle.__init__(self, arc_center=location, radius=radius, **self.style_dict)
 
-    def update_status(self, new_status):
-        return Circle(arc_center=self.location, radius=self.radius, **self.style_dict)
-
+    def status_replica(self, new_status):  # create copy except for new status
+        return Node(new_status, location=self.location, radius=self.radius, style=self.style)
 
 
 
 class Edge(Line):
-    def __init__(self, node1, node2, color=WHITE):  # order matters for animation
+    def __init__(self, node1, node2, color=INERT_EDGE_COLOR):  # order matters for animation
         connecting_vector = node2.location - node1.location
         unit_vector = connecting_vector/np.linalg.norm(connecting_vector)
-        starting_point = node1.location + unit_vector*node1.radius
-        ending_point = node2.location - unit_vector*node2.radius
-        Line.__init__(self, start=starting_point, end=ending_point, color=color)
+        self.starting_point = node1.location + unit_vector*node1.radius
+        self.ending_point = node2.location - unit_vector*node2.radius
+        Line.__init__(self, start=self.starting_point, end=self.ending_point, color=color)
+
+    def color_replica(self, new_color):
+        return Line(self.starting_point, self.ending_point, color=new_color)
+
+
+class DirectedEdge(Vector):
+    def __init__(self, node1, node2, color=INERT_EDGE_COLOR):
+        connecting_vector = node2.location - node1.location
+        unit_vector = connecting_vector/np.linalg.norm(connecting_vector)
+        self.starting_point = node1.location + unit_vector*node1.radius
+        self.ending_point = node2.location - unit_vector*node2.radius
+        Vector.__init__(self, start=self.starting_point, end=self.ending_point, color=color)
+
+    def color_replica(self, new_color):
+        return Arrow(self.starting_point, self.ending_point, color=new_color)
+
+
+def InfectEdge(edge):
+    return ShowCreation(edge.color_replica(INFECTING_EDGE_COLOR))
+
+
+def TransformNodeStatus(node, new_status):
+    return Transform(node, node.status_replica(new_status))
+
+
+def ConnectNodes(node1, node2):  # achteraf gezien is dit niet zo handig, aangezien je het Edge object nodig hebt
+    edge = Edge(node1, node2)    # om te kunnen infecteren
+    return ShowCreation(edge)
+
+
 

@@ -4,9 +4,9 @@ import os
 # It seems it sometimes expects a cached file that does not exist. Don't know how to fix.
 
 # SETTINGS #
-file = 'simple_infection'       # must be in same folder
-scene_name = 'Graph'
-render_setting = '-p'           # -p for HD 60fps, -pl for 480p15, -s for last frame
+file = 'simulation_animation'       # must be in same folder
+scene_name = 'Simulation'
+render_setting = '-pl'           # -p for HD 60fps, -pl for 480p15, -s for last frame
 # -------- #
 
 
