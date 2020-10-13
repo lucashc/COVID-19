@@ -6,9 +6,9 @@ n = 1e4
 result <- simulate(n = n, 
                    monitor = TRUE, 
                    lambda = 0.256, # Found with binary search
-                   n_days = 30, 
-                   infection_prob = 0.05,
-                   lpois = 14,
+                   n_days = 200, 
+                   infection_prob = 0.01,
+                   lpois = 30,
                    initial_infections = 25
 )
 
