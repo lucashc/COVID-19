@@ -121,7 +121,7 @@ graph_diagnostics <- function(graph, node_data, groups = c(2,3), fit=FALSE){
   n = length(explored)
   distances = vector()
   
-  edges_per_node = vector(length=n)
+  edges_per_node = rep(0, n) # vector(length=n)
   if (S){
     pb <- progress_bar$new(total = n, format=" Diagnosing [:bar] :percent")
     pb$tick(0)
@@ -132,8 +132,10 @@ graph_diagnostics <- function(graph, node_data, groups = c(2,3), fit=FALSE){
   for (i in 1:n){
     main_node = explored[i]
     neighbors <- graph[[main_node]]
-    edges_per_node[i] = length(neighbors)
-
+    edges_per_node[i] = edges_per_node[i] + length(neighbors) #+ length(neighbors[which(node_data$status[neighbors] %in% c(2,3))])  # double count edges
+    for (neighbor in neighbors){
+      edges_per_node[neighbor] = edges_per_node[neighbor] + 1
+    }
     reduced_neighbors = neighbors[which(neighbors>main_node)]  # select higher to prevent double-counting
     neighbor_distances = node_distance(node_data, main_node, reduced_neighbors)
     distances <- c(distances, neighbor_distances)
