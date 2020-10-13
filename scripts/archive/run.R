@@ -1,6 +1,6 @@
 library(EpiModel)
 
-source("scripts/local-settings.R")
+source("local-settings.R")
 
 nw <- network::network.initialize(n = erg.networksize, directed = FALSE)
 nw <- erg.initialise(nw)

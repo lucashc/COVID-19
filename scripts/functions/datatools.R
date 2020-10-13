@@ -19,3 +19,26 @@ sortBundesland <- function(data) {
     print(sum(data[data$Bundesland == l,]$AnzahlFall))
   }
 }
+
+moving_average <- function(values, window) {
+  res = vector(length = length(values) - window + 1)
+  for (i in 1:(length(values)-window + 1)) {
+    res[i] = values[i]
+    for (j in 1:(window - 1)) {
+      res[i] = res[i] + values[i + j]
+    }
+  }
+  return(res/window)
+}
+
+rki.moving_average_plot <- function() {
+  df <- rki.load()
+  IDR <- rki.getIDR(df)
+  plot(moving_average(IDR$infections, 7))
+}
+
+rki.cumsum_plot <- function() {
+  df <- rki.load()
+  IDR <- rki.getIDR(df)
+  plot(cumsum(IDR$infections))
+}
