@@ -12,8 +12,13 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap<- function(obj, title="Heat map of infections", from=2, start_nodes = FALSE) {
-  node_data = obj$node_data
+plotHeatMap <- function(obj, title="Heat map of infections", from=2, start_nodes = FALSE) {
+  node_data <- obj$node_data
+  d1 <- plotHeatMapGeneral(node_data, title, from, start_nodes, obj=obj)
+  print(d1)
+}
+
+plotHeatMapGeneral<- function(node_data, title="Heat map of infections", from=2, start_nodes = FALSE, obj=NULL) {
   raw_data <- node_data[node_data$status == from, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
@@ -28,7 +33,21 @@ plotHeatMap<- function(obj, title="Heat map of infections", from=2, start_nodes 
     d1 <- d1 + scale_alpha_manual(values=1) + labs(alpha='initially infected')
   }
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
-  print(d1)
+  return(d1)
+}
+
+plotHeatMapFrames <- function(records, from=2, prefix='spread') {
+  filename <- "./history/%s%04d.png"
+  plots <- list()
+  for (i in 2:length(records)) {
+    plots[[i]] <- plotHeatMapGeneral(records[[i]], sprintf("Heatmap of infections at day %d", i-1), from)
+  }
+  max_count <- max(ggplot_build(plots[[length(plots)]])$data[[2]]$count)
+  jet.colors <- colorRampPalette(c("#3BAB1D", "yellow","orange","red","#7F0000"))
+  for (i in 1:length(records)) {
+    pl <- plots[[i]] + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²', na.value='#FFFFFF00', limits=c(0, max_count))
+    ggsave(sprintf(filename, prefix, i), plot=pl)
+  }
 }
 
 plotNodes <- function(node_data, title="Infections", from=1) {

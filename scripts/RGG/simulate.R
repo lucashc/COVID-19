@@ -22,17 +22,20 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE) {
+simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE, sample=NULL) {
   
-  node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights)
+  node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights, sample=sample)
   graph <- generate_empty_graph(n)
   recoverytime <- 1 + rpois(n, lpois)
   
-  initial_infected = sample(nrow(node_data), initial_infections)
-  node_data[initial_infected, "status"] <- 1
-  node_data[initial_infected, "recovery_time"] <- recoverytime[initial_infected]
+  initials = sample(nrow(node_data), initial_infections+initial_immune)
+  node_data[initials[1:initial_infections], "status"] <- 1
+  if (initial_immune != 0){
+    node_data[initials[(initial_infections+1):(initial_infections+initial_immune)], "status"] <- 3
+  }
+  node_data[initials[1:initial_infections], "recovery_time"] <- recoverytime[initials[1:initial_infections]]
   
-  history <- data.frame(day=0, S=n-initial_infections, I=0, R=0, J=initial_infections)
+  history <- data.frame(day=0, S=n-initial_infections-initial_immune, I=0, R=initial_immune, J=initial_infections)
   
   if (monitor) {
     diagnostic_history <- list()
@@ -59,7 +62,7 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     
     statusI <- node_data$status == 2
     statusR <- node_data$recovery_time <= i
-  
+    
     infected <- which(statusI)
     
     # Handle recovery
@@ -70,8 +73,8 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
       neighbours <- graph[[node]]
       susneighs <- neighbours[which(node_data[neighbours,"status"] == 0)]
       return(susneighs[runif(length(susneighs)) < infection_prob])
-    },infected))
-
+    },infected, SIMPLIFY = FALSE))
+    
     node_data[infneighs,"status"] <- 1
     node_data[infneighs,"recovery_time"] <- i + recoverytime[infneighs]
     
@@ -79,10 +82,10 @@ simulate <- function(n=1e6, initial_infections=10, n_days=20, infection_prob=0.0
     new_n_inf <- sum(node_data$status == 1)
     old_n_inf <- sum(node_data$status == 2)
     history[nrow(history) + 1,] <- c(i,
-      sum(node_data$status == 0),
-      old_n_inf,
-      sum(node_data$status == 3),
-      new_n_inf
+                                     sum(node_data$status == 0),
+                                     old_n_inf,
+                                     sum(node_data$status == 3),
+                                     new_n_inf
     )
     pb$tick(tokens=list(J=new_n_inf, I=old_n_inf))
     if (monitor) {

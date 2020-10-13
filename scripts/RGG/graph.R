@@ -7,13 +7,15 @@ printnq<- function(...){
 }
 
 
-generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000){
+generate_node_data <- function(n, weights = rep.int(1, n), status = rep(0, n), recovery_time = rep.int(-1,n), accuracy = 1000, sample=NULL){
   # Status codes
   # S: 0  (susceptible)
   # J: 1  (newly infected)
   # I: 2  (infected but not J)
   # R: 3  (recovered)
-  sample = geo.sample(n, accuracy)
+  if (is.null(sample)) {
+    sample = geo.sample(n, accuracy)
+  }
   x <- sample$x
   y <- sample$y
   y <- max(y) - y
