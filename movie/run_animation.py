@@ -14,7 +14,7 @@ def run_animation(filename, scene_name, render_setting='-p'):
     if os.name == 'nt':  # Windows
         os.system(f"python -m manim {filename} {scene_name} {render_setting}")
     elif os.name == 'posix':  # Unix-based
-        os.system(f"python3.7 -m manim {filename} {scene_name} {render_setting}")
+        os.system(f"python3 -m manim {filename} {scene_name} {render_setting}")
     else:
         SystemError("Platform not supported")
 
