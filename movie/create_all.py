@@ -7,6 +7,8 @@ scenes = [
     "show_density.Density",
     "newspaper_extracts.Extracts",
     "intro.Intro"
+    "simulation_animation.MovingCamZoom",
+    "simulation_animation.NodeTypes"
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
