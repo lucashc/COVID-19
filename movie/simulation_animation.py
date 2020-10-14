@@ -142,7 +142,7 @@ class SimulationWithZoomSave(Scene):
         y_coords = np.arange(-8, 9, 3, dtype=np.float64)
 
         grid = np.transpose([np.tile(x_coords, len(y_coords)), np.repeat(y_coords, len(x_coords))]) + \
-               (np.random.rand(len(x_coords) * len(y_coords), 2) -0.5) * 3
+               (np.random.rand(len(x_coords) * len(y_coords), 2) - 0.5) * 3
 
 
         outer_coords = [np.array([r[0], r[1], 0]) for r in grid if
@@ -155,6 +155,7 @@ class SimulationWithZoomSave(Scene):
         self.play(*(FadeIn(n) for n in outer_nodes))
         self.play(ScaleInPlace(all_nodes_and_edges, 0.5))
         self.wait()
+
 
 class MovingCamZoom(MovingCameraScene):
     def construct(self):
@@ -180,7 +181,6 @@ class MovingCamZoom(MovingCameraScene):
         grid = np.transpose([np.tile(x_coords, len(y_coords)), np.repeat(y_coords, len(x_coords))]) + \
                (np.random.rand(len(x_coords) * len(y_coords), 2) -0.5) * 3
 
-
         outer_coords = [np.array([r[0], r[1], 0]) for r in grid if
                         not(abs(r[0]) < 2.8 and abs(r[1]) < 2.2)]
         outer_nodes = [Node('S', location=p) for p in outer_coords]
@@ -197,4 +197,22 @@ class MovingCamZoom(MovingCameraScene):
         self.play(self.camera_frame.set_height, self.camera_frame.get_height()*2,
                   *(FadeIn(n) for n in outer_nodes))
 
+        self.wait()
+
+
+class NodeTypes(Scene):
+    def construct(self):
+        # this is the intro part (better to keep separate and edit everything together)
+        title_text = (Tex("Node types").scale(HEADER_SCALE)).to_edge(UP)
+        self.play(Write(title_text))
+        self.wait(1)
+        legend_nodes = [Node(status, location=np.array([-2, 1-i, 0])) for i, status in enumerate(['S', 'I', 'R', 'J'])]
+        legend_texts = ["Susceptible", "Infected", "Recovered", "Newly infected"]
+        legend_texs = [Tex(status).next_to(node, buff=0.5) for status, node in zip(legend_texts, legend_nodes)]
+        for i in range(4):
+            self.play(GrowFromCenter(legend_nodes[i]), Write(legend_texs[i]))
+
+        self.wait(1)
+        all_objects = [title_text] + legend_nodes + legend_texs
+        self.play(*[Uncreate(x) for x in all_objects])
         self.wait()
