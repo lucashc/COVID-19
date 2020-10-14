@@ -171,7 +171,7 @@ class MovingCamZoom(MovingCameraScene):
                   Edge(nodes[11], nodes[3]), Edge(nodes[11], nodes[10])]
         edges3 = [Edge(nodes[8], nodes[4]), Edge(nodes[8], nodes[5]), Edge(nodes[3], nodes[9])]
         infected_edges = [edge.color_replica(INFECTING_EDGE_COLOR) for edge in [edges[1], edges[3], edges2[1], edges2[2],
-                                                                         edges2[0], edges3[1]]]
+                                                                         edges2[0], edges3[1], edges[0], edges3[2]]]
 
         I_nodes = [node.status_replica('I') for node in [nodes[8], nodes[3], nodes[6], nodes[11], nodes[0], nodes[1]]]
         J_nodes = [node.status_replica('J') for node in [nodes[4], nodes[5], nodes[9]]]
@@ -216,3 +216,4 @@ class NodeTypes(Scene):
         all_objects = [title_text] + legend_nodes + legend_texs
         self.play(*[Uncreate(x) for x in all_objects])
         self.wait()
+
