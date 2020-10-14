@@ -1,5 +1,5 @@
 from manim import *
-from movie.presets import *
+from presets import *
 import numpy as np
 
 class Simulation(Scene):

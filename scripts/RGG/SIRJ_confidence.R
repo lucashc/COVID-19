@@ -23,10 +23,10 @@ plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
     pl <- plotTypeConf(pl, total, t)
   }
   scale <- c(
-    'S' = 'green',
+    'S' = 'blue',
     'I' = 'red',
     'J' = 'orange',
-    'R' = 'blue'
+    'R' = 'green'
   )
   pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='SIRJ plot', x='days', y='cases', fill='', colour='')
   return(pl)
