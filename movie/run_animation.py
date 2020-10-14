@@ -5,8 +5,8 @@ import os
 
 # SETTINGS #
 file = 'simulation_animation'       # must be in same folder
-scene_name = 'TrialConnection'
-render_setting = '-pl'           # -p for HD 60fps, -pl for 480p15, -s for last frame
+scene_name = 'MovingCamZoom'
+render_setting = '-p'           # -p for HD 60fps, -pl for 480p15, -s for last frame
 # -------- #
 
 
