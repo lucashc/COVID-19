@@ -2,7 +2,7 @@
 .Rhistory
 .Rapp.history
 # Session Data files
-.RData
+*.RData
 # User-specific files
 .Ruserdata
 # Example code in package build process
@@ -32,3 +32,5 @@ scripts/local-settings.R
 
 # History directory
 history/
+*.eps
+*.png

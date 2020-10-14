@@ -1,48 +1,52 @@
 source('./scripts/RGG/graph.R')
 library(progress)
 library(parallel)
+library(EnvStats)
 
 # Make reproducible
 set.seed(1)
 
-ncores = 8
+ncores = 4
 
 search <- function(n, sample_size, lambda, alpha, node_data = NA) {
   if (is.na(node_data)){node_data <- generate_simple_node_data(n, weights = rpareto(n, 3/4, 4))}
   
   sampled = sample(nrow(node_data), sample_size)
   
-  total_edges = sum(mcmapply(function(s) {
-    if (s == n) {return(0)}
+  total_edges = 0
+  for (s in sampled) {
+    if (s == n) {next}
     susceptible = (s+1):n
-    return(sum(connect(node_data, s, susceptible, alpha, lambda)))}, sampled, mc.cores = ncores))
-
-  return(2*total_edges/sample_size)
+    total_edges = total_edges + sum(connect(node_data, s, susceptible, alpha, lambda))
+  }
+  
+  return(total_edges/sample_size)
 }
 
 average_avg_edges <- function(alpha, n, lambda, sample_size, shots = 5, accuracy = 1000) {
-  node_data = generate_simple_node_data(n, weights = rpareto(n, 3/4, 4))
-  x = replicate(shots, search(n, sample_size, lambda, alpha, node_data))
-  print(sprintf("variance: %f", var(x)))
+  node_data = generate_simple_node_data(n)
+  x = mcmapply(function(s) {search(n, sample_size, lambda, alpha, node_data)}, 1:shots, mc.cores = ncores)
+  print(sprintf("standard deviation: %f", sd(x)))
   return(mean(x))
 }
 
-find_lambda <- function(n, alpha, sample_size, step=1, shots = 10, target = 7.95, accuracy = 1000) {
+find_lambda <- function(n, alpha, sample_size, step=1, shots = 8, target = 7.95, accuracy = 1000) {
   lambda = 0
   guess = average_avg_edges(alpha, n, step, sample_size, shots, accuracy)
   while(guess < target) {
     step = step * 2
     guess = average_avg_edges(alpha, n, step, sample_size, shots, accuracy)
-    print(sprintf("guess: %.2f", guess))
+    print(sprintf("guess: %f", guess))
+    print(sprintf("step: %f", step))
   }
-  while(abs(guess - target) > 0.01) {
+  while(abs(guess - target) > 0.1) {
     step = step/2
     guess = average_avg_edges(alpha, n, lambda + step, sample_size, shots, accuracy)
     if (guess < target) {
       lambda = lambda + step
-      print(sprintf("lambda: %.2f", lambda))
+      print(sprintf("lambda: %f", lambda))
     }
-    print(sprintf("guess: %.2f", guess))
+    print(sprintf("guess: %f", guess))
   }
   
   print(sprintf("%i: final lambda: %f", n, lambda))
@@ -56,4 +60,4 @@ find_lambda <- function(n, alpha, sample_size, step=1, shots = 10, target = 7.95
 # }
 # print(lambdas)
 print("Starting")
-print(find_lambda(1e6, 0.5, 1e4, 0.002))
+print(find_lambda(1e4, 0.5, 1e4, 0.002))

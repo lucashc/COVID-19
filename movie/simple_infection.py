@@ -1,5 +1,5 @@
 from manim import *
-from movie.presets import *
+from presets import *
 
 class Graph(Scene):
     def construct(self):
