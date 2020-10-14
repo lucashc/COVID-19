@@ -5,7 +5,8 @@ from pathlib import Path
 # Format 
 scenes = [
     "show_density.Density",
-    "simulation_animation.SimulationWithZoomSave"
+    "simulation_animation.MovingCamZoom",
+    "simulation_animation.NodeTypes"
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
