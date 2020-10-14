@@ -36,3 +36,4 @@ history/
 *.png
 media/
 __pycache__/
+finished/
