@@ -28,6 +28,6 @@ plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
     'J' = 'orange',
     'R' = 'green'
   )
-  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='SIRJ plot', x='days', y='cases', fill='', colour='')
+  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='SIRJ plot 95% interval', x='days', y='cases', fill='', colour='')
   return(pl)
 }
