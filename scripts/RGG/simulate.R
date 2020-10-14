@@ -22,8 +22,12 @@ if (.Platform$OS.type == "unix") {
 }
 
 
-simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, infection_prob=0.05, lambda=1e-3, alpha=0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE, sample=NULL) {
-  
+simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, infection_prob=0.05, lambda=1e-3, alpha = 0.5, lpois=14, monitor=FALSE, weights=rep.int(1, n), record_infected = FALSE, sample=NULL) {
+  if (is.numeric(infection_prob)) {
+    infection_prob_func <- function(i, s, j) {return(infection_prob)}
+  } else {
+    infection_prob_func <- infection_prob
+  }
   node_data <- generate_node_data(n, recovery_time=rep.int(0,n), weights = weights, sample=sample)
   graph <- generate_empty_graph(n)
   recoverytime <- 1 + rpois(n, lpois)
@@ -53,9 +57,11 @@ simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, 
   pb <- progress_bar$new(total = n_days, format=" Simulating [:bar] :percent :current/:total :elapsed I: :I J: :J")
   pb <- pb$tick(0, tokens=list(I=0, J=initial_infections))
   for (i in 1:n_days) {
+    
     # Make edges to new people if they are not infected. This works parallel on Linux.
     susceptible <- which(node_data$status == 0)
     newlyinfected <- which(node_data$status == 1)
+    
     graph[newlyinfected] <- mclapply(newlyinfected, function(sick) {susceptible[connect(node_data, sick, susceptible, alpha, lambda)]}, mc.cores = ncores)
     
     node_data[newlyinfected,"status"] = 2
@@ -63,16 +69,18 @@ simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, 
     statusI <- node_data$status == 2
     statusR <- node_data$recovery_time <= i
     
-    infected <- which(statusI)
-    
     # Handle recovery
     node_data[statusI & statusR, "status"] <- 3
     
+    infected <- which(node_data$status == 2)
+    
+    infection_probability = infection_prob_func(i, length(infected), length(newlyinfected))
+
     # Infect people
     infneighs = do.call(c, mapply(function(node){
       neighbours <- graph[[node]]
       susneighs <- neighbours[which(node_data[neighbours,"status"] == 0)]
-      return(susneighs[runif(length(susneighs)) < infection_prob])
+      return(susneighs[runif(length(susneighs)) < infection_probability])
     },infected, SIMPLIFY = FALSE))
     
     node_data[infneighs,"status"] <- 1
@@ -123,7 +131,6 @@ print.simulation_results <- function(result) {
   printnq(sprintf("Simulation ran for %d days", result$settings$n_days))
   printnq(sprintf("Simulation started with %d infections", result$settings$initial_infections))
   printnq(sprintf("Settings: infprob %f, lambda %f, alpha %f, lpois %f",
-                  result$settings$infection_prob,
                   result$settings$lambda,
                   result$settings$alpha,
                   result$settings$lpois))
