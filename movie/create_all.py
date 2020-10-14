@@ -5,7 +5,8 @@ from pathlib import Path
 # Format 
 scenes = [
     "show_density.Density",
-    "simulation_animation.SimulationWithZoomSave"
+    "newspaper_extracts.Extracts",
+    "intro.Intro"
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
