@@ -34,3 +34,5 @@ scripts/local-settings.R
 history/
 *.eps
 *.png
+media/
+__pycache__/
