@@ -8,7 +8,10 @@ R_COLOR = '#0DEE0A'
 J_COLOR = '#F6BD1D'
 INERT_EDGE_COLOR = WHITE
 INFECTING_EDGE_COLOR = I_COLOR
+HEADER_SCALE = 2.2
+
 color_dict = {'S': S_COLOR, 'I': I_COLOR, 'R': R_COLOR, 'J': J_COLOR}
+
 
 class Node(Circle):
     def __init__(self, status, location=ORIGIN, radius=0.3, style='hollow'):
