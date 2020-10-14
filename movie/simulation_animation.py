@@ -1,5 +1,4 @@
 from manim import *
-from movie.presets import *  # this import is only so that my IDE does not complain. Must be above other presets import
 from presets import *
 import numpy as np
 import random
