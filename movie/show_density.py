@@ -16,3 +16,4 @@ class Density(Scene):
             return mob
         self.add(text)
         self.play(ApplyFunction(apply_func, text), GrowFromCenter(image))
+        self.wait()
