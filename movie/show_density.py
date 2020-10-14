@@ -17,3 +17,5 @@ class Density(Scene):
         self.add(text)
         self.play(ApplyFunction(apply_func, text), GrowFromCenter(image))
         self.wait()
+        self.play(FadeOut(text), FadeOut(image))
+        self.wait()

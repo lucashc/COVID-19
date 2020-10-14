@@ -5,6 +5,8 @@ from pathlib import Path
 # Format 
 scenes = [
     "show_density.Density",
+    "newspaper_extracts.Extracts",
+    "intro.Intro"
     "simulation_animation.MovingCamZoom",
     "simulation_animation.NodeTypes"
 ]
