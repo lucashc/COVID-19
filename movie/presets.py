@@ -54,7 +54,13 @@ class DirectedEdge(Vector):
 
 
 def InfectEdge(edge):
-    return ShowCreation(edge.color_replica(INFECTING_EDGE_COLOR))
+    replica = edge.color_replica(INFECTING_EDGE_COLOR)
+    return ShowCreation(replica)
+
+
+def InfectEdgeReturn(edge):   # in case you need the edge
+    replica = edge.color_replica(INFECTING_EDGE_COLOR)
+    return ShowCreation(replica), replica
 
 
 def TransformNodeStatus(node, new_status):
