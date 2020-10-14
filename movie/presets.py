@@ -2,10 +2,10 @@ from manim import *
 import numpy as np
 
 # don't be afraid to change these if you find better colors
-I_COLOR = RED  # '#EE0A0A' # this color is maybe too bright
+I_COLOR = '#F61D1D'
 S_COLOR = '#0AACEE'
 R_COLOR = '#0DEE0A'
-J_COLOR = '#EE9B0A'
+J_COLOR = '#F6BD1D'
 INERT_EDGE_COLOR = WHITE
 INFECTING_EDGE_COLOR = I_COLOR
 color_dict = {'S': S_COLOR, 'I': I_COLOR, 'R': R_COLOR, 'J': J_COLOR}
