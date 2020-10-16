@@ -1,4 +1,5 @@
 library(ggplot2)
+source("./scripts/functions/datatools.R")
 
 
 getBand <- function(df, t='S') {
@@ -29,5 +30,23 @@ plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
     'R' = 'green'
   )
   pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='SIRJ plot 95% interval', x='days', y='cases', fill='', colour='')
+  return(pl)
+}
+
+plotConfJRKI <- function(histories, start, end, scale) {
+  IDR <- rki.getIDR(rki.load())
+  total <- data.frame(histories)
+  total[,'J'] <- total[,'J']*scale
+  pl <- ggplot()
+  pl <- plotTypeConf(pl, total, 'J')
+  pl <- pl + geom_point(aes(x=0:(end-start), y=infections, color='RKI'), data=IDR[start:end,], shape=3)
+  scale <- c(
+    'S' = 'blue',
+    'I' = 'red',
+    'J' = 'orange',
+    'R' = 'green',
+    'RKI' = 'black'
+  )
+  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='Infections plot 95% interval', x='days', y='cases', fill='', colour='') + guides(fill=FALSE, shape=FALSE)
   return(pl)
 }
