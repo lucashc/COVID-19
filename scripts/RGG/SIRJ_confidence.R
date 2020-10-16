@@ -52,7 +52,7 @@ plotConfCumRKI<- function(h, start, end, scale) {
   IDR <- rki.getIDR(rki.load())
   IDR$infections <- cumsum(IDR$infections)
   total <- list()
-  for (i in 1:length(histories)) {
+  for (i in 1:length(h)) {
     new_subtotal <- data.frame(h[[i]]$day, (h[[i]]$I+h[[i]]$R+h[[i]]$J)*scale)
     names(new_subtotal) <- c('day', 'cum')
     total[[i]] <- new_subtotal

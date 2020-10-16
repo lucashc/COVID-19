@@ -22,3 +22,5 @@ histories = lapply(1:shots, function(s) {simulate(n = n,
                    lpois = 14,
                    initial_infections = 25 # day 25 in rki data
 )$history})
+
+plotConfCumRKI(histories, start_day, end_day, 80)
