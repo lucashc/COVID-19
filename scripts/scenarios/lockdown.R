@@ -13,9 +13,9 @@ result <- simulate(n = n,
                    n_days = end_day-start_day, 
                    infection_prob = function(t, s, j) {
                      if (t < 20) {
-                       return(0.024)
+                       return(0.026)
                      } else {
-                       return(0.006)
+                       return(0.005)
                      }
                    },
                    lpois = 14,
