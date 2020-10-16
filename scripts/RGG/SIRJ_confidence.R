@@ -41,12 +41,29 @@ plotConfJRKI <- function(histories, start, end, scale) {
   pl <- plotTypeConf(pl, total, 'J')
   pl <- pl + geom_point(aes(x=0:(end-start), y=infections, color='RKI'), data=IDR[start:end,], shape=3)
   scale <- c(
-    'S' = 'blue',
-    'I' = 'red',
     'J' = 'orange',
-    'R' = 'green',
     'RKI' = 'black'
   )
   pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='Infections plot 95% interval', x='days', y='cases', fill='', colour='') + guides(fill=FALSE, shape=FALSE)
+  return(pl)
+}
+
+plotConfCumRKI<- function(h, start, end, scale) {
+  IDR <- rki.getIDR(rki.load())
+  IDR$infections <- cumsum(IDR$infections)
+  total <- list()
+  for (i in 1:length(histories)) {
+    new_subtotal <- data.frame(h[[i]]$day, (h[[i]]$I+h[[i]]$R+h[[i]]$J)*scale)
+    names(new_subtotal) <- c('day', 'cum')
+    total[[i]] <- new_subtotal
+  }
+  total <- data.frame(total)
+  pl <- ggplot()
+  pl <- plotTypeConf(pl, total, t='cum') + geom_point(aes(x=0:(end-start), y=infections, color='RKI'), data=IDR[start:end,], shape=3)
+  scale <- c(
+    'cum' = 'blue',
+    'RKI' = 'black'
+  )
+  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='Cumulative infections 95% confidence', x='days', y='cases', fill='', colour='') + guides(fill=FALSE, shape=FALSE)
   return(pl)
 }
