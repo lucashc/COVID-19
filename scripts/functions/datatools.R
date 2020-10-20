@@ -31,10 +31,10 @@ moving_average <- function(values, window) {
   return(res/window)
 }
 
-rki.moving_average_plot <- function() {
+rki.moving_average_plot <- function(till) {
   df <- rki.load()
   IDR <- rki.getIDR(df)
-  plot(moving_average(IDR$infections, 7))
+  plot(moving_average(IDR$infections[1:till], 7))
 }
 
 rki.cumsum_plot <- function(till) {
