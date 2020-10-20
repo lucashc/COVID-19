@@ -89,7 +89,7 @@ class Formula(Scene):
         A = MathTex('P').scale(2)
         A.set_coord(-4, 0)
         B = MathTex('= 1-e').next_to(A).scale(2)
-        #plus = MathTex('+').next_to(B).scale(4)
+        # plus = MathTex('+').next_to(B).scale(4)
         C = MathTex(r'-\lambda').next_to(B, RIGHT + UP, buff=0).scale(1.5)
         D = MathTex(r'w_1 w_2 d(x,y)^{-\alpha}').next_to(C).scale(1.5)
         B.add_updater(lambda m: m.next_to(A))

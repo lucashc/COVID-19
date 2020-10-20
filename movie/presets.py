@@ -36,8 +36,8 @@ class Edge(Line):
     def __init__(self, node1, node2, color=INERT_EDGE_COLOR):  # order matters for animation
         connecting_vector = node2.location - node1.location
         unit_vector = connecting_vector/np.linalg.norm(connecting_vector)
-        self.starting_point = node1.location + unit_vector*node1.radius
-        self.ending_point = node2.location - unit_vector*node2.radius
+        self.starting_point = node1.location + unit_vector*node1.radius + 0.02*unit_vector
+        self.ending_point = node2.location - unit_vector*node2.radius - 0.02*unit_vector
         Line.__init__(self, start=self.starting_point, end=self.ending_point, color=color)
 
     def color_replica(self, new_color):
