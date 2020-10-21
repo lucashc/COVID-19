@@ -25,13 +25,13 @@ def run_animation(filename, scene_name, render_setting='-p'):
 
 x = Path(os.getcwd() + '/finished').mkdir(parents=True, exist_ok=True)
 
-for filename, scene_name in pairings:
+for index, filename, scene_name in enumerate(pairings):
     filename_abs = os.getcwd() + '/' + filename + '.py'
     print(f"Making scene {scene_name} from {filename}")
     run_animation(filename_abs, scene_name, render_setting)
     # Copy finished file
     moviepath = os.getcwd() + '/media/videos/' + filename + '/1080p60/' + scene_name + '.mp4'
-    to = os.getcwd() + '/finished/' + scene_name + '.mp4'
+    to = os.getcwd() + '/finished/' + str(index) + ' ' + scene_name + '.mp4'
     copyfile(moviepath, to)
     print(f"Movie file from {scene_name} copied to finished")
 
