@@ -4,21 +4,15 @@ from pathlib import Path
 
 # Format 
 scenes = [
-<<<<<<< HEAD
     "intro.Intro",                          # 1
     "newspaper_extracts.Extracs",           # 2
     # Sven: add intro scene                 # 3
     "show_density.Density",                 # 4
     "percolation.Graph",                    # 5
     "simulation_animation.NodeTypes",       # 6
-=======
-    "show_density.Density",
-    "newspaper_extracts.Extracts",
-    "intro.Intro"
-    "simulation_animation.MovingCamZoom",
-    "simulation_animation.NodeTypes",
-    "simulation_animation.ZoomIntoGraph"
->>>>>>> 81ba96e8091895bc7403b6ee9655a426c1df618b
+    "simulation_animation.ZoomIntoGraph"    # 7
+    "simulation_animation.TrialConnection"  # 8
+    # ...
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
