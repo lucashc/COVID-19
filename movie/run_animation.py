@@ -6,7 +6,7 @@ import shutil
 
 # SETTINGS #
 file = 'graph_intro'       # must be in same folder
-scene_name = 'Graph_Intro'
+scene_name = 'Highlight_Nodes'
 render_setting = '-pl'           # -p for HD 60fps, -pl for 480p15, -s for last frame
 if render_setting == '-pl':
     path = os.getcwd() + '/media/videos/' + file + '/480p15/partial_movie_files'

@@ -21,7 +21,7 @@ class Graph_Intro(Scene):
         self.play(ShowCreation(edge_vgroup))
         self.wait(1)
 
-class Highlight_Node(Scene):
+class Highlight_Nodes(Scene):
     def construct(self):
         t1 = Tex("{\\Large A Graph")
         t1.move_to([0,3,0])
@@ -33,3 +33,10 @@ class Highlight_Node(Scene):
                     Edge(nodes[0], nodes[6]), Edge(nodes[6], nodes[4]), Edge(nodes[6], nodes[8]),
                     Edge(nodes[11], nodes[3]), Edge(nodes[11], nodes[10]), Edge(nodes[8], nodes[4]),
                     Edge(nodes[8], nodes[5]), Edge(nodes[3], nodes[9])]
+        self.add(t1, *nodes, *edges)
+        # highlighted_nodes = [node.highlight_replica() for node in nodes]
+        # self.play(*(Transform(node, hnode, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
+        # self.play(*(Transform(hnode, node, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
+        self.play(*(TransformNodeHighlight(node) for node in nodes))
+        self.play(*(TransformNodeHighlight(node) for node in nodes))
+        self.wait()
