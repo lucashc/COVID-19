@@ -111,6 +111,9 @@ def TransformNodeHighlight(node, highlight=True, **kwargs):
     return Transform(node, node.highlight_replica(highlight), **kwargs)
 
 
+def TransformEdgeHighlight(edge, color, **kwargs):
+    return Transform(edge, edge.color_replica(color), **kwargs)
+
 def ConnectNodes(node1, node2):  # achteraf gezien is dit niet zo handig, aangezien je het Edge object nodig hebt
     edge = Edge(node1, node2)    # om te kunnen infecteren
     return ShowCreation(edge)
