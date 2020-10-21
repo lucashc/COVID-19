@@ -222,7 +222,7 @@ class Still(MovingCameraScene):
         coords = [[0, 0], [1.5, 2], [-4, 1.2], [2.4, -1.2], [-3, -1.7], [-2.8, 1.7], [-1, -2], [-0.5, 2.2],
                   [-2, -0.5], [1.2, -2.1], [3, 0.5], [1, 0.5]]
         np_coords = [np.array(r + [0]) for r in coords]
-        nodes = [Node('S', location=r, style='filled') for r in np_coords]
+        nodes = [Node('S', location=r) for r in np_coords]
         nodes[0] = nodes[0].status_replica('J')
 
         edges = [Edge(nodes[0], nodes[1]), Edge(nodes[0], nodes[11]), Edge(nodes[0], nodes[8]),
@@ -233,8 +233,9 @@ class Still(MovingCameraScene):
         infected_edges = [edge.color_replica(INFECTING_EDGE_COLOR) for edge in [edges[1], edges[3], edges2[1], edges2[2],
                                                                          edges2[0], edges3[1], edges[0], edges3[2]]]
 
-        I_nodes = [node.status_replica('I') for node in [nodes[8], nodes[3], nodes[6], nodes[11], nodes[0], nodes[1]]]
+        I_nodes = [node.status_replica('I') for node in [nodes[8], nodes[3], nodes[6], nodes[11], nodes[0]]]
         J_nodes = [node.status_replica('J') for node in [nodes[4], nodes[5], nodes[9]]]
+        nodes[1] = nodes[1].status_replica('R')
         x_coords = np.arange(-14, 15, 3, dtype=np.float64)
         y_coords = np.arange(-8, 9, 3, dtype=np.float64)
 
