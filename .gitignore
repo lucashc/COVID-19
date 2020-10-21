@@ -27,6 +27,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 *.Rproj
+*.Rdata
 scripts/local-settings.R
 .Rproj.user
 

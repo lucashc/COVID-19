@@ -247,7 +247,7 @@ class Still(MovingCameraScene):
         outer_nodes = [Node('S', location=p) for p in outer_coords]
 
         all_nodes_and_edges = VGroup(*(nodes + J_nodes + I_nodes + edges +
-                                       edges2 + edges3 + infected_edges ))
+                                       edges2 + edges3 + infected_edges))
         self.add(all_nodes_and_edges)
 
         # first fade in nodes
@@ -255,5 +255,28 @@ class Still(MovingCameraScene):
         # self.play(self.camera_frame.set_height, self.camera_frame.get_height()*2)
 
         # simultaneous
+
+        self.wait()
+
+
+
+class ZoomIntoGraph(MovingCameraScene):
+    def construct(self):
+        self.camera_frame.set_height(self.camera_frame.get_height()*20)
+        image = ImageMobject('images/InitialInfections.png').scale(60)
+        self.play(FadeIn(image))
+        coords = [[0, 0], [1.5, 2], [-4, 1.2], [2.4, -1.2], [-3, -1.7], [-2.8, 1.7], [-1, -2], [-0.5, 2.2],
+                  [-2, -0.5], [1.2, -2.1], [3, 0.5], [1, 0.5]]
+        np_coords = [np.array(r + [0]) for r in coords]
+        nodes = [Node('S', location=r) for r in np_coords]
+        nodes[0] = nodes[0].status_replica('J')
+        Nodes = VGroup(*nodes)
+
+        # self.play(self.camera_frame.set_height, self.camera_frame.get_height()/40,
+        #           FadeOutAndShift(image, 80*RIGHT, rate_func=lingering), FadeIn(init_node))
+
+        self.play(ApplyMethod(image.shift, 16.8*RIGHT + 21/2*UP))
+        self.play(self.camera_frame.set_height, self.camera_frame.get_height()/20, FadeOut(image),
+                  FadeIn(Nodes, rate_func=lingering))
 
         self.wait()
