@@ -3,13 +3,15 @@ import numpy as np
 
 # don't be afraid to change these if you find better colors
 class preset_style:
-    def __init__(self, I_COLOR, S_COLOR, R_COLOR, J_COLOR, \
+    def __init__(self, N_COLOR, I_COLOR, S_COLOR, R_COLOR, J_COLOR, \
         INERT_EDGE_COLOR, INFECTING_EDGE_COLOR, style = 'hollow', \
-        E_I_COLOR = WHITE, E_S_COLOR = WHITE, E_R_COLOR = WHITE, E_J_COLOR = WHITE):
+        E_N_COLOR = WHITE, E_I_COLOR = WHITE, E_S_COLOR = WHITE, E_R_COLOR = WHITE, E_J_COLOR = WHITE):
         self.I_COLOR = I_COLOR
         self.S_COLOR = S_COLOR
         self.R_COLOR = R_COLOR
         self.J_COLOR = J_COLOR
+        self.N_COLOR = N_COLOR
+        self.E_N_COLOR = E_N_COLOR
         self.E_I_COLOR = E_I_COLOR
         self.E_S_COLOR = E_S_COLOR
         self.E_R_COLOR = E_R_COLOR
@@ -18,9 +20,9 @@ class preset_style:
         self.INERT_EDGE_COLOR = INERT_EDGE_COLOR
         self.INFECTING_EDGE_COLOR = INFECTING_EDGE_COLOR
 
-filled = preset_style('#F61D1D', '#0AACEE', '#0DEE0A', '#F6BD1D', '#CBDEE9', '#F61D1D', 'filled',\
- '#4a0b0b', '#03354a', '#044003', '#453508')
-hole = preset_style('#F61D1D', '#0AACEE', '#0DEE0A', '#F6BD1D', '#CBDEE9', '#F61D1D')
+filled = preset_style('#CBDEE9', '#F61D1D', '#0AACEE', '#0DEE0A', '#F6BD1D', '#CBDEE9', '#F61D1D', 'filled',\
+ '#2c3033', '#4a0b0b', '#03354a', '#044003', '#453508')
+hole = preset_style('#CBDEE9', '#F61D1D', '#0AACEE', '#0DEE0A', '#F6BD1D', '#CBDEE9', '#F61D1D')
 
 style = filled
 
@@ -28,6 +30,8 @@ I_COLOR = style.I_COLOR
 S_COLOR = style.S_COLOR
 R_COLOR = style.R_COLOR
 J_COLOR = style.J_COLOR
+N_COLOR = style.N_COLOR
+E_N_COLOR = style.E_N_COLOR
 E_I_COLOR = style.E_I_COLOR
 E_S_COLOR = style.E_S_COLOR
 E_R_COLOR = style.E_R_COLOR
@@ -36,8 +40,8 @@ INERT_EDGE_COLOR = style.INERT_EDGE_COLOR
 INFECTING_EDGE_COLOR = style.INFECTING_EDGE_COLOR
 HEADER_SCALE = 2.2
 
-border_color_dict = {'S': S_COLOR, 'I': I_COLOR, 'R': R_COLOR, 'J': J_COLOR}
-fill_color_dict = {'S': E_S_COLOR, 'I': E_I_COLOR, 'R': E_R_COLOR, 'J': E_J_COLOR}
+border_color_dict = {'N': N_COLOR, 'S': S_COLOR, 'I': I_COLOR, 'R': R_COLOR, 'J': J_COLOR}
+fill_color_dict = {'N': E_N_COLOR, 'S': E_S_COLOR, 'I': E_I_COLOR, 'R': E_R_COLOR, 'J': E_J_COLOR}
 
 class Node(Circle):
     def __init__(self, status, location=ORIGIN, radius=0.3, style=style.style):

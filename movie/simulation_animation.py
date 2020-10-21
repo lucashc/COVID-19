@@ -77,7 +77,7 @@ class Simulation(Scene):
 
 class TrialConnection(Scene):
     def construct(self):
-        title = Tex("A newly infected node tries to connect to all  other nodes").to_edge(UP)
+        title = Tex("A newly infected node tries to connect to all other nodes").to_edge(UP)
         self.play(Write(title))
 
         # coords = [[0, 0], [1.5, 2], [-4, 1.2], [2.4, -1.2], [-3, -1.7], [-2.8, 1.7], [-1, -2], [-0.5, 2.2],
