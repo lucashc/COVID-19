@@ -34,9 +34,8 @@ class Highlight_Nodes(Scene):
                     Edge(nodes[11], nodes[3]), Edge(nodes[11], nodes[10]), Edge(nodes[8], nodes[4]),
                     Edge(nodes[8], nodes[5]), Edge(nodes[3], nodes[9])]
         self.add(t1, *nodes, *edges)
-        # highlighted_nodes = [node.highlight_replica() for node in nodes]
-        # self.play(*(Transform(node, hnode, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
-        # self.play(*(Transform(hnode, node, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
-        self.play(*(TransformNodeHighlight(node, True) for node in nodes))
-        self.play(*(TransformNodeHighlight(node, False) for node in nodes))
+        self.wait()
+        self.play(*(TransformNodeHighlight(node, True) for node in nodes), run_time=0.5)
+        self.wait(0.5)
+        self.play(*(TransformNodeHighlight(node, False) for node in nodes), run_time=0.5)
         self.wait()
