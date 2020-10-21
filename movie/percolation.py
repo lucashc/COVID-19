@@ -30,9 +30,9 @@ class Graph(GraphScene):
         f_shadow = self.graph(1/2, color=WHITE, stroke_opacity=0.4)
 
         f_big_l = self.graph(1)
-        f_big_l_shadow = self.graph(1, color=ORANGE, stroke_opacity=0.4)
+        f_big_l_shadow = self.graph(1, color=S_COLOR, stroke_opacity=0.4)
         f_small_l = self.graph(1/4)
-        f_small_l_shadow = self.graph(1/4, color=ORANGE, stroke_opacity=0.4)
+        f_small_l_shadow = self.graph(1/4, color=S_COLOR, stroke_opacity=0.4)
 
         f_big_alpha = self.graph(1/2, 2)
         f_big_alpha_shadow = self.graph(1/2, 2, color=S_COLOR, stroke_opacity=0.4)
@@ -43,24 +43,41 @@ class Graph(GraphScene):
         P.move_to([-0.5, 0.5, 0])
         eq_1_min_e = MathTex('= 1-e').next_to(P)
         min_lambda = MathTex(r'^{-\lambda}').next_to(eq_1_min_e, RIGHT + UP, buff=0)
-        weights = MathTex(r'^{w_1 w_2}').next_to(min_lambda, buff=MED_SMALL_BUFF/2)
-        distance = MathTex(r'^{d(x,y)}').next_to(weights, buff=MED_SMALL_BUFF/2)
+        weight1 = MathTex(r'^{w_1}').next_to(min_lambda, buff=MED_SMALL_BUFF/2)
+        weight2 = MathTex(r'^{w_1}').next_to(weight1, buff=0)
+        distance = MathTex(r'^{d(x,y)}').next_to(weight2, buff=MED_SMALL_BUFF/2)
         min_alpha = MathTex(r'^{^{-\alpha}}').next_to(distance, RIGHT + UP, buff=0)
 
+        # updaters move the rest of the equation aligned when part is scaled
         eq_1_min_e.add_updater(lambda m: m.next_to(P))
         min_lambda.add_updater(lambda m: m.next_to(eq_1_min_e, RIGHT + UP, buff=0))
-        weights.add_updater(lambda m: m.next_to(min_lambda, buff=MED_SMALL_BUFF/2))
-        distance.add_updater(lambda m: m.next_to(weights, buff=MED_SMALL_BUFF/2))
+        weight1.add_updater(lambda m: m.next_to(min_lambda, buff=MED_SMALL_BUFF/2))
+        weight2.add_updater(lambda m: m.next_to(weight1, buff=0))
+        distance.add_updater(lambda m: m.next_to(weight2, buff=MED_SMALL_BUFF/2))
         min_alpha.add_updater(lambda m: m.next_to(distance, RIGHT + UP, buff=0))
 
-        eq = VGroup(P, eq_1_min_e, min_lambda, weights, distance, min_alpha)
+        eq = VGroup(P, eq_1_min_e, min_lambda, weight1, weight2, distance, min_alpha)
 
+        # draw function, add equation, color labels
         self.play(ShowCreation(f, run_time=1.5), Write(eq))
         self.bring_to_back(f_shadow)
         self.wait()
-        self.play(FadeToColor(xlabel, R_COLOR), FadeToColor(distance, R_COLOR))
-        self.play(FadeToColor(ylabel, J_COLOR), FadeToColor(P, J_COLOR))
+        self.play(xlabel.set_color, R_COLOR, xlabel.scale,2, distance.set_color, R_COLOR, distance.scale, 2)
+        self.play(xlabel.scale, 1/2, distance.scale, 1/2)
+        self.play(ylabel.set_color, J_COLOR, ylabel.scale, 2, P.set_color, J_COLOR, P.scale, 2)
+        self.play(ylabel.scale, 1 / 2, P.scale, 1 / 2)
         self.wait()
+
+        # vary alpha
+        self.play(ScaleInPlace(min_alpha, 1.5), Transform(f, f_big_alpha))
+        self.wait()
+        self.play(ScaleInPlace(min_alpha, 0.4), Transform(f, f_small_alpha), FadeIn(f_big_alpha_shadow))
+        self.wait()
+        self.play(ScaleInPlace(min_alpha, 1/(1.5*0.4)), Transform(f, f_copy), FadeIn(f_small_alpha_shadow))
+        self.wait()
+        self.play(FadeOut(f_small_alpha_shadow), FadeOut(f_big_alpha_shadow))
+
+        # vary lambda
         self.play(ScaleInPlace(P, 1.5), ScaleInPlace(min_lambda, 1.5), Transform(f, f_big_l), FadeIn(f_shadow))
         self.wait()
         self.play(ScaleInPlace(P, 0.4), ScaleInPlace(min_lambda, 0.4), Transform(f, f_small_l), FadeIn(f_big_l_shadow))
@@ -68,12 +85,19 @@ class Graph(GraphScene):
         self.play(ScaleInPlace(P, 1/(1.5*0.4)), ScaleInPlace(min_lambda, 1/(1.5*0.4)),
                   Transform(f, f_copy), FadeIn(f_small_l_shadow))
         self.wait()
-        self.play(ScaleInPlace(min_alpha, 1.5), Transform(f, f_big_alpha))
+        self.play(FadeOut(f_small_l_shadow), FadeOut(f_big_l_shadow))
+
+        # vary weight1  (simply reuse lambda curves, look the same anyway)
+        self.play(ScaleInPlace(P, 1.5), ScaleInPlace(weight1, 1.5), Transform(f, f_big_l), FadeIn(f_shadow))
         self.wait()
-        self.play(ScaleInPlace(min_alpha, 0.4), Transform(f, f_small_alpha), FadeIn(f_big_alpha_shadow))
+        self.play(ScaleInPlace(P, 0.4), ScaleInPlace(weight1, 0.4), Transform(f, f_small_l), FadeIn(f_big_l_shadow))
         self.wait()
-        self.play(ScaleInPlace(min_alpha, 1/(1.5*0.4)), Transform(f, f_copy), FadeIn(f_small_alpha_shadow))
+        self.play(ScaleInPlace(P, 1/(1.5*0.4)), ScaleInPlace(weight1, 1/(1.5*0.4)),
+                  Transform(f, f_copy), FadeIn(f_small_l_shadow))
         self.wait()
+        self.play(FadeOut(f_small_l_shadow), FadeOut(f_big_l_shadow))
+
+
 
     def probability(self, x, l, a):
         return 1 - np.exp(-l/x**a)
