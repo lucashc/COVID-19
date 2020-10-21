@@ -4,15 +4,16 @@ from pathlib import Path
 
 # Format 
 scenes = [
-    "show_density.Density",
-    "newspaper_extracts.Extracts",
-    "intro.Intro"
-    "simulation_animation.MovingCamZoom",
-    "simulation_animation.NodeTypes"
+    "intro.Intro",                          # 1
+    "newspaper_extracts.Extracs",           # 2
+    # Sven: add intro scene                 # 3
+    "show_density.Density",                 # 4
+    "percolation.Graph",                    # 5
+    "simulation_animation.NodeTypes",       # 6
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
-render_setting = ''           # -p for HD 60fps, -pl for 480p15, -s for last frame
+render_setting = '-k'           # -p for HD 60fps, -pl for 480p15, -s for last frame
 
 def run_animation(filename, scene_name, render_setting='-p'):
     if os.name == 'nt':  # Windows
