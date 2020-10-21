@@ -46,7 +46,7 @@ plotHeatMapFrames <- function(records, from=2, prefix='spread') {
   jet.colors <- colorRampPalette(c("#3BAB1D", "yellow","orange","red","#7F0000"))
   for (i in 1:length(records)) {
     pl <- plots[[i]] + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²', na.value='#FFFFFF00', limits=c(0, max_count))
-    ggsave(sprintf(filename, prefix, i), plot=pl)
+    ggsave(sprintf(filename, prefix, i), plot=pl, dpi=600)
   }
 }
 
