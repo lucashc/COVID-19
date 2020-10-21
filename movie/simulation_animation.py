@@ -153,7 +153,7 @@ class TrialConnection(MovingCameraScene):
         np_coords = [np.array(r+[0]) for r in coords]
         nodes = [Node('S', location=r) for r in np_coords]
         nodes[0] = nodes[0].status_replica('J')
-        self.play(*(GrowFromCenter(node) for node in nodes))
+        self.add(*nodes)
         # for n in nodes:
         #     self.add(n)
         #     self.wait(0.2)
@@ -166,12 +166,12 @@ class TrialConnection(MovingCameraScene):
             if i + 1 in succeed:  # +1 since 0 will not be connected to
                 if i + 1 == 3:
                     self.play(self.camera_frame.set_height, self.camera_frame.get_height()*2)
-                self.play(FadeIn(edge.color_replica('#1BEE0A')))
-                self.play(FadeIn(edge.color_replica(WHITE)))
+                self.play(FadeIn(edge.color_replica(R_COLOR)))  # '#1BEE0A')))
+                self.play(FadeIn(edge.color_replica(INERT_EDGE_COLOR)))
                 if i + 1 == 3:
                     self.play(self.camera_frame.set_height, self.camera_frame.get_height()*1/2)
             else:
-                self.play(Transform(edge, edge.color_replica(RED)))
+                self.play(Transform(edge, edge.color_replica(I_COLOR)))  # RED )))
                 self.play(Uncreate(edge))
 
         recolor_list = []
@@ -179,9 +179,9 @@ class TrialConnection(MovingCameraScene):
         for i, edge in enumerate(edges[one_by_one_cutoff:]):
             if i + 1 + one_by_one_cutoff in succeed:  # +1 as before, +4 since we start at 4
                 recolor_list.append(FadeIn(edge.color_replica('#1BEE0A')))  # fade to green
-                replace_list.append(FadeIn(edge.color_replica(WHITE)))  # fade to white instead of gray
+                replace_list.append(FadeIn(edge.color_replica(INERT_EDGE_COLOR)))  # fade to white instead of gray
             else:
-                recolor_list.append(Transform(edge, edge.color_replica(RED)))
+                recolor_list.append(Transform(edge, edge.color_replica(I_COLOR)))
                 replace_list.append(Uncreate(edge))
 
         self.play(*[ShowCreation(edge) for edge in edges[one_by_one_cutoff:]])
