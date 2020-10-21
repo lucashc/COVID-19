@@ -18,7 +18,7 @@ plotTypeConf <- function(pl, total, t='S', confint=0.95) {
 }
 
 
-plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confint=0.95) {
+plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confint=0.95, title='SIRJ plot 95% interval') {
   total <- data.frame(histories)
   vars <- c('S', 'I', 'R', 'J')[c(S, I, R, J)]
   pl <- ggplot()
@@ -31,7 +31,7 @@ plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confin
     'J' = 'orange',
     'R' = 'green'
   )
-  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='SIRJ plot 95% interval', x='days', y='cases', fill='', colour='')
+  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title=title, x='days', y='cases', fill='', colour='')
   return(pl)
 }
 
