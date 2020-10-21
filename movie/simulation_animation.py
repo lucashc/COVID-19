@@ -277,6 +277,6 @@ class ZoomIntoGraph(MovingCameraScene):
 
         self.play(ApplyMethod(image.shift, 16.8*RIGHT + 21/2*UP))
         self.play(self.camera_frame.set_height, self.camera_frame.get_height()/20, FadeOut(image),
-                  FadeIn(Nodes, rate_func=lingering))
+                  FadeIn(Nodes, rate_func=lingering, run_time=2))
 
         self.wait()

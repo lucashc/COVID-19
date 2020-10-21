@@ -8,7 +8,8 @@ scenes = [
     "newspaper_extracts.Extracts",
     "intro.Intro"
     "simulation_animation.MovingCamZoom",
-    "simulation_animation.NodeTypes"
+    "simulation_animation.NodeTypes",
+    "simulation_animation.ZoomIntoGraph"
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
