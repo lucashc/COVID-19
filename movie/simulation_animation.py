@@ -1,8 +1,73 @@
 from manim import *
 from presets import *
+from movie.presets import *
 import numpy as np
 import random
 import itertools
+
+
+class NewSimulation(Scene):  # to be played after TrialConnection, so nodes are simply added initially
+    def construct(self):
+        def connection_phase(new_connections, nodes, edges):
+            source_nodes = []
+            for i, j in new_connections:
+                source_nodes.append(i)
+                edges[i][j] = Edge(nodes[i], nodes[j])
+            source_nodes = set(source_nodes)
+            self.play(*(ShowCreation(edges[i][j]) for i, j in new_connections),
+                      *(Infect(nodes[k]) for k in source_nodes))
+            self.wait()
+
+        def infection_phase(new_infections, nodes, edges):
+            self.play(*(InfectEdge(edges[i][j]) for i, j in new_infections))
+            self.play(*(NewlyInfect(nodes[j]) for i, j in new_infections))
+            self.wait()
+
+        def recovery_phase(new_recoveries, nodes, edges):  # edges puur voor consistency
+            self.play(*(Recover(nodes[i]) for i in new_recoveries))
+
+        # 3
+        coords = [[0, 0], [1.5, 2], [-0.5, 2.2], [-3.2, 5.5], [-2.8, 1.7], [-4, 1.2],
+                  [-2, -0.5], [-3, -1.7], [-1, -2], [1.2, -2.1], [2.4, -1.2], [3, 0.5], [1, 0.5]]
+        # arranged counter clockwise from the 45 degree line
+        np_coords = [np.array(r + [0]) for r in coords]
+        nodes = [Node('S', location=r) for r in np_coords]
+        nodes[0] = nodes[0].status_replica('I')  # already infected in TrialConnection
+        self.add(*(node for node in nodes))
+        edges = [[None for i in range(len(nodes))] for i in range(len(nodes))]
+        for i in [1, 3, 6, 8, 12]:
+            edge = Edge(nodes[0], nodes[i])
+            edges[0][i] = edge
+            self.add(edge)
+
+        # 4
+        new_infections = [(0,8), (0,12)]
+        infection_phase(new_infections, nodes, edges)
+
+        # 5
+        new_connections = [(8, 6), (8, 7), (12, 10), (12, 11)]
+        connection_phase(new_connections, nodes, edges)
+
+        # 6
+        new_infections = [(8, 6), (12, 10)]
+        infection_phase(new_infections, nodes, edges)
+
+        # 7
+        new_infections = [(0, 1)]
+        infection_phase(new_infections, nodes, edges)
+
+        # 8
+        new_connections = [(6, 4), (6, 7), (1, 11), (10, 9)]
+        connection_phase(new_connections, nodes, edges)
+
+        # 9
+        new_infections = [(0, 3), (6, 4), (8, 7)]
+        infection_phase(new_infections, nodes, edges)
+
+        # 10
+        new_recoveries = [0, 12]
+        recovery_phase(new_recoveries, nodes, edges)
+
 
 class Simulation(Scene):
     def construct(self):
@@ -75,15 +140,16 @@ class Simulation(Scene):
         self.wait()
 
 
-class TrialConnection(Scene):
+class TrialConnection(MovingCameraScene):
     def construct(self):
-        title = Tex("A newly infected node tries to connect to all other nodes").to_edge(UP)
-        self.play(Write(title))
+        #title = Tex("A newly infected node tries to connect to all other nodes").to_edge(UP)
+        #self.play(Write(title))
 
         # coords = [[0, 0], [1.5, 2], [-4, 1.2], [2.4, -1.2], [-3, -1.7], [-2.8, 1.7], [-1, -2], [-0.5, 2.2],
         #           [-2, -0.5], [1.2, -2.1], [3, 0.5], [1, 0.5]]
-        coords = [[0, 0], [3, 0.5], [1, 0.5], [1.5, 2], [-0.5, 2.2], [-2.8, 1.7], [-4, 1.2], [-2, -0.5], [-3, -1.7],
-                  [-1, -2], [1.2, -2.1], [2.4, -1.2]]  # arranged counter clockwise from x=0
+        coords = [[0, 0], [1.5, 2], [-0.5, 2.2], [-3.2, 5.5], [-2.8, 1.7], [-4, 1.2],
+                  [-2, -0.5], [-3, -1.7], [-1, -2], [1.2, -2.1], [2.4, -1.2],  [3, 0.5],  [1, 0.5]]
+        # arranged counter clockwise from the 45 degree line
         np_coords = [np.array(r+[0]) for r in coords]
         nodes = [Node('S', location=r) for r in np_coords]
         nodes[0] = nodes[0].status_replica('J')
@@ -93,13 +159,17 @@ class TrialConnection(Scene):
         #     self.wait(0.2)
 
         edges = [Edge(nodes[0], node, color=GRAY) for node in nodes[1:]]
-        succeed = [2, 3, 7, 9]
+        succeed = [1, 3, 6, 8, 12]
         one_by_one_cutoff = 4
-        for i, edge in enumerate(edges[:one_by_one_cutoff ]):
+        for i, edge in enumerate(edges[:one_by_one_cutoff]):
             self.play(ShowCreation(edge))
             if i + 1 in succeed:  # +1 since 0 will not be connected to
+                if i + 1 == 3:
+                    self.play(self.camera_frame.set_height, self.camera_frame.get_height()*2)
                 self.play(FadeIn(edge.color_replica('#1BEE0A')))
                 self.play(FadeIn(edge.color_replica(WHITE)))
+                if i + 1 == 3:
+                    self.play(self.camera_frame.set_height, self.camera_frame.get_height()*1/2)
             else:
                 self.play(Transform(edge, edge.color_replica(RED)))
                 self.play(Uncreate(edge))
@@ -116,7 +186,7 @@ class TrialConnection(Scene):
 
         self.play(*[ShowCreation(edge) for edge in edges[one_by_one_cutoff:]])
         self.play(*[recolor for recolor in recolor_list])
-        self.play(*[replacement for replacement in replace_list])
+        self.play(*[replacement for replacement in replace_list], Infect(nodes[0]))
         self.wait()
 
 

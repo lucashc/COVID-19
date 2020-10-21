@@ -104,5 +104,11 @@ def ConnectNodes(node1, node2):  # achteraf gezien is dit niet zo handig, aangez
     edge = Edge(node1, node2)    # om te kunnen infecteren
     return ShowCreation(edge)
 
+def NewlyInfect(node):  # lui, ik weet het
+    return TransformNodeStatus(node, 'J')
 
+def Infect(node):
+    return TransformNodeStatus(node, 'I')
 
+def Recover(node):
+    return  TransformNodeStatus(node, 'R')
