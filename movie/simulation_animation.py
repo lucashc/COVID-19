@@ -247,7 +247,7 @@ class Still(MovingCameraScene):
         outer_nodes = [Node('S', location=p) for p in outer_coords]
 
         all_nodes_and_edges = VGroup(*(nodes + J_nodes + I_nodes + edges +
-                                       edges2 + edges3 + infected_edges ))
+                                       edges2 + edges3 + infected_edges))
         self.add(all_nodes_and_edges)
 
         # first fade in nodes
@@ -257,3 +257,12 @@ class Still(MovingCameraScene):
         # simultaneous
 
         self.wait()
+
+
+
+class ZoomIntoGraph(MovingCameraScene):
+    def construct(self):
+        self.camera_frame.set_height(self.camera_frame.get_height()*20)
+        image = ImageMobject('images/popdens.png').scale(60)
+        self.play(FadeIn(image))
+        self.play(self.camera_frame.set_height, self.camera_frame.get_height()/40, FadeOut(image))
