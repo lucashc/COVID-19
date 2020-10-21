@@ -37,6 +37,6 @@ class Highlight_Nodes(Scene):
         # highlighted_nodes = [node.highlight_replica() for node in nodes]
         # self.play(*(Transform(node, hnode, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
         # self.play(*(Transform(hnode, node, run_time=2) for node, hnode in zip(nodes, highlighted_nodes)))
-        self.play(*(TransformNodeHighlight(node) for node in nodes))
-        self.play(*(TransformNodeHighlight(node) for node in nodes))
+        self.play(*(TransformNodeHighlight(node, True) for node in nodes))
+        self.play(*(TransformNodeHighlight(node, False) for node in nodes))
         self.wait()

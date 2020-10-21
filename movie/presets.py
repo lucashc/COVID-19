@@ -65,8 +65,8 @@ class Node(Circle):
     def status_replica(self, new_status):  # create copy except for new status
         return Node(new_status, location=self.location, radius=self.radius, style=self.style)
     
-    def highlight_replica(self):
-        return Node(status=self.status, location=self.location, radius=self.radius, style=self.style, highlight=not self.highlight)
+    def highlight_replica(self, highlight=False):
+        return Node(status=self.status, location=self.location, radius=self.radius, style=self.style, highlight=highlight)
 
 
 
@@ -107,8 +107,8 @@ def InfectEdgeReturn(edge):   # in case you need the edge
 def TransformNodeStatus(node, new_status):
     return Transform(node, node.status_replica(new_status))
 
-def TransformNodeHighlight(node, **kwargs):
-    return Transform(node, node.highlight_replica(), **kwargs)
+def TransformNodeHighlight(node, highlight=True, **kwargs):
+    return Transform(node, node.highlight_replica(highlight), **kwargs)
 
 
 def ConnectNodes(node1, node2):  # achteraf gezien is dit niet zo handig, aangezien je het Edge object nodig hebt
