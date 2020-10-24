@@ -66,24 +66,25 @@ class ConnectionDistance(Scene):
         self.play(Transform(first_num_tex, last_num_tex), prob_tick.move_to,
                   [scaled_pi, nl_height + 0.15, 0], run_time=0.2)
 
-
         self.play(first_num_tex.set_color, R_COLOR, first_num_tex.scale, 2, prob_tick.scale, 1.7)
         self.play(first_num_tex.scale, 1/2, prob_tick.scale, 1/1.7)
 
-        green_dot1 = Dot(color=R_COLOR).move_to([-3,3.5,0])
+        green_dot1 = Dot(color=R_COLOR).move_to([-3, 3.5, 0])
         ineq1 = MathTex('<').next_to(green_dot1)
         purple_dot = Dot(color="#bc20d4").next_to(ineq1)
         expr1 = VGroup(green_dot1, ineq1, purple_dot)
 
-        green_dot2 = Dot(color=R_COLOR).move_to([3,3.5,0])
+        green_dot2 = Dot(color=R_COLOR).move_to([3, 3.5, 0])
         ineq2 = MathTex('>').next_to(green_dot2)
         yellow_dot = Dot(color=J_COLOR).next_to(ineq2)
 
         expr2 = VGroup(yellow_dot, ineq2, green_dot2)
 
         self.play(Write(expr1))
-        self.play(Transform(edges[0], edges[0].color_replica(R_COLOR)))
-        self.play(FadeIn(edges[0].color_replica(INERT_EDGE_COLOR)))
+        new_edge = Edge(nodes[1],nodes[0], color=R_COLOR).set_stroke_width(10)
+
+        self.play(Transform(edges[0], new_edge))
+        self.play(FadeIn(edges[0].color_replica(INERT_EDGE_COLOR)), FadeOut(edges[0]))
 
         self.play(Write(expr2))
         self.play(Transform(edges[1], edges[1].color_replica(I_COLOR)))

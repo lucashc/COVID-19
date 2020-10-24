@@ -76,11 +76,14 @@ class Edge(Line):
         unit_vector = connecting_vector/np.linalg.norm(connecting_vector)
         self.starting_point = node1.location + unit_vector*node1.radius + 0.02*unit_vector
         self.ending_point = node2.location - unit_vector*node2.radius - 0.02*unit_vector
+        self.color = color
         Line.__init__(self, start=self.starting_point, end=self.ending_point, color=color)
 
     def color_replica(self, new_color):
         return Line(self.starting_point, self.ending_point, color=new_color)
 
+    def set_stroke_width(self, stroke_width):
+        return Line(self.starting_point, self.ending_point, color=self.color, stroke_width=stroke_width)
 
 class DirectedEdge(Vector):
     def __init__(self, node1, node2, color=INERT_EDGE_COLOR):
