@@ -185,7 +185,9 @@ class TrialConnection(MovingCameraScene):
 
         self.play(*[ShowCreation(edge) for edge in edges[one_by_one_cutoff:]])
         self.play(*[recolor for recolor in recolor_list])
-        self.play(*[replacement for replacement in replace_list], Infect(nodes[0]))
+        self.play(*[replacement for replacement in replace_list])
+        self.wait()
+        self.play(Infect(nodes[0]))
         self.wait()
 
 
@@ -285,6 +287,7 @@ class NodeTypes(Scene):
         all_objects = [title_text] + legend_nodes + legend_texs
         self.play(*[Uncreate(x) for x in all_objects])
         self.wait()
+
 
 class Still(MovingCameraScene):
     def construct(self):
