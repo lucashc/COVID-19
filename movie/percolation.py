@@ -44,7 +44,7 @@ class Graph(GraphScene):
         eq_1_min_e = MathTex('= 1-e').next_to(P)
         min_lambda = MathTex(r'^{-\lambda}').next_to(eq_1_min_e, RIGHT + UP, buff=0)
         weight1 = MathTex(r'^{w_1}').next_to(min_lambda, buff=MED_SMALL_BUFF/2)
-        weight2 = MathTex(r'^{w_1}').next_to(weight1, buff=0)
+        weight2 = MathTex(r'^{w_2}').next_to(weight1, buff=0)
         distance = MathTex(r'^{d(x,y)}').next_to(weight2, buff=MED_SMALL_BUFF/2)
         min_alpha = MathTex(r'^{^{-\alpha}}').next_to(distance, RIGHT + UP, buff=0)
 
