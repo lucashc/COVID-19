@@ -10,6 +10,7 @@ scenes = [
     "graph_intro.Highlight_Nodes",          # 3
     "graph_intro.Highlight_Edges",          # 3
     "show_density.Density",                 # 4
+    "show_density.ConnectionDistance",      # 4
     "percolation.Graph",                    # 5
     "simulation_animation.NodeTypes",       # 6
     "simulation_animation.ZoomIntoGraph",   # 7

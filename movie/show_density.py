@@ -33,7 +33,7 @@ class ConnectionDistance(Scene):
         np_coords = [np.array(r + [0]) for r in coords]
         nodes = [Node('S', location=r) for r in np_coords[:2]]
         nodes += [Node('S', location=r, radius=0.1) for r in np_coords[2:]]
-        image = ImageMobject("images/InitialInfections.png").move_to([3, 1, 0]).scale(2.5)
+        image = ImageMobject("images/Germany.png").move_to([3, 1, 0]).scale(2.5)
         self.play(FadeIn(image), *(GrowFromCenter(n)for n in nodes))
         edges = [Edge(nodes[1], nodes[0], color="#bc20d4"), Edge(nodes[2], nodes[3], color=J_COLOR)]
         self.play(ShowCreation(edges[0]),  ShowCreation(edges[1]))
