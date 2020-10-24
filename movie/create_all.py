@@ -6,18 +6,20 @@ from pathlib import Path
 scenes = [
     "titles.Intro",                         # 1
     "newspaper_extracts.Extracts",          # 2
-    # Sven: add intro scene                 # 3
+    "graph_intro.Graph_Intro",
+    "graph_intro.Highlight_Nodes",
+    "graph_intro.Highlight_Edges",
     "show_density.Density",                 # 4
     "percolation.Graph",                    # 5
     "simulation_animation.NodeTypes",       # 6
     "simulation_animation.ZoomIntoGraph",   # 7
     "simulation_animation.TrialConnection", # 8
-    # ...
+    "simulation_animation.NewSimulation",
     "titles.Outro"
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
-render_setting = '-k'           # -p for HD 60fps, -pl for 480p15, -s for last frame
+render_setting = ''           # -p for HD 60fps, -pl for 480p15, -s for last frame
 
 def run_animation(filename, scene_name, render_setting='-p'):
     if os.name == 'nt':  # Windows
@@ -34,7 +36,7 @@ for index, (filename, scene_name) in enumerate(pairings):
     print(f"Making scene {scene_name} from {filename}")
     run_animation(filename_abs, scene_name, render_setting)
     # Copy finished file
-    moviepath = os.getcwd() + '/media/videos/' + filename + '/2160p60/' + scene_name + '.mp4'
+    moviepath = os.getcwd() + '/media/videos/' + filename + '/1080p60/' + scene_name + '.mp4'
     to = os.getcwd() + '/finished/' + str(index) + ' ' + scene_name + '.mp4'
     copyfile(moviepath, to)
     print(f"Movie file from {scene_name} copied to finished")
