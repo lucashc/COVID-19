@@ -6,16 +6,17 @@ from pathlib import Path
 scenes = [
     "titles.Intro",                         # 1
     "newspaper_extracts.Extracts",          # 2
-    "graph_intro.Graph_Intro",
-    "graph_intro.Highlight_Nodes",
-    "graph_intro.Highlight_Edges",
+    "graph_intro.Graph_Intro",              # 3
+    "graph_intro.Highlight_Nodes",          # 3
+    "graph_intro.Highlight_Edges",          # 3
     "show_density.Density",                 # 4
     "percolation.Graph",                    # 5
     "simulation_animation.NodeTypes",       # 6
     "simulation_animation.ZoomIntoGraph",   # 7
     "simulation_animation.TrialConnection", # 8
-    "simulation_animation.NewSimulation",
-    "titles.Outro"
+    "simulation_animation.NewSimulation",   # 10, 11, 12 
+    # 13 GIF
+    "titles.Outro"                          # 14
 ]
 
 pairings = map(lambda x: tuple(x.split('.')), scenes)
