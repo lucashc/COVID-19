@@ -1,6 +1,5 @@
 from manim import *
 from presets import *
-from movie.presets import *
 import numpy as np
 import random
 import itertools
