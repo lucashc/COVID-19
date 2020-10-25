@@ -371,3 +371,21 @@ class ZoomIntoGraph(MovingCameraScene):
                   FadeIn(Nodes, rate_func=lingering, run_time=2))
 
         self.wait()
+
+
+class SocialNode(MovingCameraScene):
+    def construct(self):
+        coords = [[0, 0], [1, 1], [2, 1], [-1, 0.5], [0, -2], [-1,-1.5], [1.5, -1], [-2,-0.5], [-0.5, 1]]
+        np_coords = [np.array(r + [0]) for r in coords]
+        nodes = [Node('S', location=r) for r in np_coords]
+        far_nodes = [Node('S', location=[7, -1.5, 0]), Node('S', location=[3, -5, 0])]
+        nodes[0] = nodes[0].status_replica('J')
+        edges = [Edge(nodes[0], nodes[i]) for i in range(1, len(nodes))]
+        far_edges = [Edge(nodes[0], far_nodes[i]) for i in range(2)]
+        self.camera_frame.set_height(0.6*self.camera_frame.get_height())
+        self.play(*(GrowFromCenter(n) for n in nodes+far_nodes))
+        self.play(*(ShowCreation(e) for e in edges))
+        self.wait()
+        self.play(self.camera_frame.set_height, self.camera_frame.get_height()*3)
+        self.play(*(ShowCreation(e) for e in far_edges))
+        self.wait()

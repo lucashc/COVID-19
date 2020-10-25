@@ -3,6 +3,7 @@ from presets import *
 import numpy as np
 import random
 import itertools
+import copy
 
 class Density(Scene):
     def construct(self):
@@ -89,4 +90,87 @@ class ConnectionDistance(Scene):
         self.play(Write(expr2))
         self.play(Transform(edges[1], edges[1].color_replica(I_COLOR)))
         self.play(Uncreate(edges[1]))
+        self.wait()
+
+
+class ConnectionDistance2(Scene):
+    def construct(self):
+        def random_probability(length=9):
+            return "0." + str(random.randint(0, 10**length-1)).rjust(length, '0')
+
+        def ct(x):  # coordinate transform
+            return 6*float(x) - 3
+
+        coords = [[-3, 1], [-4, 2], [1.6, 2.35], [4.1, -0.9]]
+        np_coords = [np.array(r + [0]) for r in coords]
+        nodes = [Node('S', location=r) for r in np_coords[:2]]
+        nodes += [Node('S', location=r, radius=0.1) for r in np_coords[2:]]
+        image = ImageMobject("images/Germany.png").move_to([3, 1, 0]).scale(2.5)
+        self.play(FadeIn(image), *(GrowFromCenter(n)for n in nodes))
+        edges = [Edge(nodes[1], nodes[0], color="#bc20d4"), Edge(nodes[2], nodes[3], color=J_COLOR)]
+        self.play(ShowCreation(edges[0]),  ShowCreation(edges[1]))
+
+        nl_height = -2.7
+        numberline1 = NumberLine(x_min=0, x_max=1, numbers_with_elongated_ticks=[0, 1],
+                                 unit_size=6, include_numbers=True, numbers_to_show=[0, 1]).move_to([0,nl_height,0])
+        label = Tex("Probability of connecting").next_to(numberline1, DOWN)
+        small_dist_tick = Line([1, nl_height-0.1, 0], [1, nl_height+0.4, 0], color="#bc20d4")
+        large_dist_tick = Line([-2.5, nl_height-0.1, 0], [-2.5, nl_height+0.4, 0], color=J_COLOR)
+        self.play(Write(numberline1), FadeIn(small_dist_tick), FadeIn(large_dist_tick), Write(label))
+
+        new_edge = Edge(nodes[1], nodes[0], color=R_COLOR).set_stroke_width(10)
+
+        self.play(Transform(edges[0], new_edge))
+
+        self.play(Transform(edges[0], edges[0].color_replica(INERT_EDGE_COLOR)))
+
+        # self.play(Write(expr2))
+        self.play(Transform(edges[1], edges[1].color_replica(I_COLOR)))
+        self.play(Uncreate(edges[1]))
+        self.wait()
+
+
+
+
+class ConnectionDistance3(Scene):
+    def construct(self):
+        def random_probability(length=9):
+            return "0." + str(random.randint(0, 10**length-1)).rjust(length, '0')
+
+        def ct(x):  # coordinate transform
+            return 6*float(x) - 3
+
+        coords = [[-1.7, -0.2], [-1.2, 0], [-1.55, 2.65], [1.28, -1.23]]
+        np_coords = [np.array(r + [0]) for r in coords]
+        nodes = [Node('S', location=r, radius=0.1) for r in np_coords]
+        image = ImageMobject("images/Germany.png").scale(2.8).move_to([0,1,0])
+
+        edges = [Edge(nodes[1], nodes[0], color="#bc20d4"), Edge(nodes[2], nodes[3], color=J_COLOR)]
+
+
+        nl_height = -2.7
+        numberline1 = NumberLine(x_min=0, x_max=1, numbers_with_elongated_ticks=[0, 1],
+                                 unit_size=6, include_numbers=True, numbers_to_show=[0, 1]).move_to([0,nl_height,0])
+        label = Tex("Probability of connecting").next_to(numberline1, DOWN)
+        small_dist_tick = Line([1, nl_height-0.1, 0], [1, nl_height+0.4, 0], color="#bc20d4")
+        large_dist_tick = Line([-2.5, nl_height-0.1, 0], [-2.5, nl_height+0.4, 0], color=J_COLOR)
+
+        self.play(FadeIn(image), *(GrowFromCenter(n) for n in nodes), Write(numberline1), Write(label))
+        self.play(ShowCreation(edges[1]))
+        self.play(ShowCreation(edges[0]))
+        edges_copy = [Edge(nodes[1], nodes[0], color="#bc20d4"), Edge(nodes[2], nodes[3], color=J_COLOR)]
+        self.add(*edges_copy)
+        self.play(Transform(edges_copy[0], small_dist_tick))
+        self.play(Transform(edges_copy[1], large_dist_tick))
+        self.wait()
+        new_edge = Edge(nodes[1],nodes[0], color=R_COLOR).set_stroke_width(10)
+
+        small_dist_tick_copy = Line([1, nl_height - 0.1, 0], [1, nl_height + 0.4, 0], color="#bc20d4")
+        large_dist_tick_copy = Line([-2.5, nl_height - 0.1, 0], [-2.5, nl_height + 0.4, 0], color=J_COLOR)
+        self.add(small_dist_tick_copy, large_dist_tick_copy)
+        self.play(Transform(small_dist_tick_copy, new_edge))
+        self.play(Transform(small_dist_tick_copy, edges[0].color_replica(INERT_EDGE_COLOR)))
+
+        self.play(Transform(large_dist_tick_copy, edges[1].color_replica(I_COLOR)))
+        self.play(Uncreate(large_dist_tick_copy), Uncreate(edges[1]))
         self.wait()
