@@ -12,14 +12,14 @@ plotSIRJ <- function(obj, title="SIRJ-plot", S=TRUE, I=TRUE, R=TRUE, J=TRUE) {
   #fig
 }
 
-plotHeatMap <- function(obj, title="Heat map of infections", from=2, start_nodes = FALSE) {
+plotHeatMap <- function(obj, title="Heat map of infections", from=c(2), start_nodes = FALSE) {
   node_data <- obj$node_data
   d1 <- plotHeatMapGeneral(node_data, title, from, start_nodes, obj=obj)
   print(d1)
 }
 
-plotHeatMapGeneral<- function(node_data, title="Heat map of infections", from=2, start_nodes = FALSE, obj=NULL) {
-  raw_data <- node_data[node_data$status == from, c('x', 'y')]
+plotHeatMapGeneral<- function(node_data, title="Heat map of infections", from=c(2), start_nodes = FALSE, obj=NULL, special_theme=FALSE) {
+  raw_data <- node_data[node_data$status %in% from, c('x', 'y')]
   geo <- geo.getMask()
   geo <- t(apply(geo, 2, rev))
   geo <- geo*0
@@ -33,20 +33,39 @@ plotHeatMapGeneral<- function(node_data, title="Heat map of infections", from=2,
     d1 <- d1 + scale_alpha_manual(values=1) + labs(alpha='initially infected')
   }
   d1 <- d1 + coord_fixed() + labs(title=title) + xlab('km') + ylab('km')
+  if (special_theme) {
+    library(showtext)
+    font_add('lmodern', regular = '/usr/share/fonts/TTF/cmunrm.ttf')
+    showtext_auto()
+    d1 <- d1 + theme(rect=element_rect(fill="transparent", color="transparent"), 
+                     axis.title.x = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.background = element_rect(fill="transparent", colour='transparent'),
+                     panel.background = element_rect(fill="transparent", colour='transparent'),
+                     plot.title = element_text(family="lmodern", colour='white', size = rel(22)),
+                     legend.text = element_text(family="lmodern", colour='white', size=rel(8)),
+                     legend.title=element_text(family="lmodern", colour='white', size=rel(10))
+                     #legend.spacing.y = unit(0.2, 'cm')
+                     ) + scale_x_continuous(breaks=NULL) + scale_y_continuous(breaks=NULL)
+  }
   return(d1)
 }
 
-plotHeatMapFrames <- function(records, from=2, prefix='spread') {
+plotHeatMapFrames <- function(records, from=c(2), prefix='spread', special_theme=FALSE) {
+  if (special_theme) {
+    font_add('lmodern', regular = '/usr/share/fonts/TTF/cmunrm.ttf')
+  }
   filename <- "./history/%s%04d.png"
   plots <- list()
   for (i in 2:length(records)) {
-    plots[[i]] <- plotHeatMapGeneral(records[[i]], sprintf("Heatmap of infections at day %d", i-1), from)
+    plots[[i]] <- plotHeatMapGeneral(records[[i]], sprintf("Cumulative infections at day %d", i-1), from, special_theme = special_theme)
   }
   max_count <- max(ggplot_build(plots[[length(plots)]])$data[[2]]$count)
+  print(max_count)
   jet.colors <- colorRampPalette(c("#3BAB1D", "yellow","orange","red","#7F0000"))
   for (i in 1:length(records)) {
     pl <- plots[[i]] + scale_fill_gradientn(colors=jet.colors(7), name='density per 10 km²', na.value='#FFFFFF00', limits=c(0, max_count))
-    ggsave(sprintf(filename, prefix, i), plot=pl, dpi=600)
+    ggsave(sprintf(filename, prefix, i), plot=pl, dpi=600, bg='transparent')
   }
 }
 
