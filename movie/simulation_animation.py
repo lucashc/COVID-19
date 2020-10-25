@@ -96,7 +96,7 @@ class Simulation(Scene):
         subtitle = Tex("Nodes have different colors depending on their status").next_to(title_text, DOWN)
         self.play(Write(subtitle))
         legend_nodes = [Node(status, location=np.array([-2, 1-i, 0])) for i, status in enumerate(['S', 'I', 'R', 'J'])]
-        legend_texts = ["Susceptible", "Infected", "Recovered", "Newly infected"]
+        legend_texts = ["Susceptible", "Infected", "Removed", "Newly infected"]
         legend_texs = [Tex(status).next_to(node) for status, node in zip(legend_texts, legend_nodes)]
         for i in range(4):
             self.play(GrowFromCenter(legend_nodes[i]), Write(legend_texs[i]))
@@ -297,7 +297,7 @@ class NodeTypes(Scene):
         self.play(Write(title_text))
         self.wait(1)
         legend_nodes = [Node(status, location=np.array([-2, 1-i, 0])) for i, status in enumerate(['S', 'I', 'R', 'J'])]
-        legend_texts = ["Susceptible", "Infected", "Recovered", "Newly infected"]
+        legend_texts = ["Susceptible", "Infected", "Removed", "Newly infected"]
         legend_texs = [Tex(status).next_to(node, buff=0.5) for status, node in zip(legend_texts, legend_nodes)]
         for i in range(4):
             self.play(GrowFromCenter(legend_nodes[i]), Write(legend_texs[i]))
