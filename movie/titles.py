@@ -15,7 +15,7 @@ class Intro(Scene):
 class Outro(Scene):
     def construct(self):
         self.wait(0.5)
-        credit = Tex(r"{\centering Creators: \\ Benjamin Oudejans \\ Sven Holtrop \\ Lucas Crijns \\ Pim Keer \\ Maxime Delboo}").shift(UP*6)
+        credit = Tex(r"{\centering Creators: \\ Lucas Crijns \\ Maxime Delboo \\ Sven Holtrop \\ Pim Keer \\ Benjamin Oudejans}").shift(UP*6)
         thanksto = Tex(r"Animated with Manim provided by 3b1b").scale(0.6).shift(DOWN*3)
         self.add(credit)
         self.play(credit.shift, DOWN*5, ShowCreation(thanksto))
