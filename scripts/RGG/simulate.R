@@ -100,7 +100,7 @@ simulate <- function(n=1e6, initial_infections=10, initial_immune=0, n_days=20, 
       diagnostic_history[[i+1]] <- graph_diagnostics(graph, node_data)
     }
     if (record_infected) {
-      record[[i+1]] <- node_data[node_data$status == c(1,2), c('status', 'x', 'y')]
+      record[[i+1]] <- node_data[node_data$status %in% c(1,2,3), c('status', 'x', 'y')]
     }
     # Try garbage collection each loop
     rm(susceptible)
