@@ -149,8 +149,15 @@ graph_diagnostics <- function(graph, node_data, groups = c(2,3), fit=FALSE){
   
   average_degree <- mean(edges_per_node) # double counting is desired in this case
   average_distance <- mean(distances)
+  median_degree <- median(edges_per_node)
+  median_distance <- median(distances)
   
-  diag <- list(edges_per_node = edges_per_node, distances = distances, average_distance = average_distance, average_degree = average_degree)
+  diag <- list(edges_per_node = edges_per_node, 
+               distances = distances, 
+               average_distance = average_distance, 
+               average_degree = average_degree, 
+               median_degree=median_degree, 
+               median_distance = median_distance)
   class(diag) <- "graph_diagnostics"
   
   return(diag)
@@ -163,6 +170,8 @@ print.graph_diagnostics <- function(diag){
   distances = diag$distances
   average_distance = diag$average_distance
   average_degree = diag$average_degree
+  median_degree = diag$median_degree
+  median_distance = diag$median_distance
   
   
   total_edges <- as.integer(round(sum(edges_per_node) / 2))  # edges are corrected for double-counting
@@ -173,10 +182,12 @@ print.graph_diagnostics <- function(diag){
   printnq('Edges: %d', total_edges)
   printnq("Node degree")
   printnq('- Mean: %.2f',average_degree)
+  printnq('- Median: %.2f', median_degree)
   printnq('- Std. dev: %.2f', var(edges_per_node)^0.5)
                 
   printnq('Distance between connected nodes')
   printnq('- Mean: %.2f', average_distance)
+  printnq('- Median: %.2f', median_distance)
   printnq('- Std. dev: %.2f', var(distances)^0.5)
   printnq('-------------------------')
 }
