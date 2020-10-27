@@ -13,16 +13,16 @@ getBand <- function(df, t='S', confint=0.95) {
 
 plotTypeConf <- function(pl, total, t='S', confint=0.95) {
   data <- getBand(total, t, confint)
-  pl <- pl + geom_line(aes(x=day, y=mean, color=t), data=data) + geom_ribbon(aes(x=day, ymin=low, ymax=high, fill=t), data=data, alpha=0.2)
+  pl <- pl + geom_line(aes(x=day, y=mean, color=t), data=data) + geom_ribbon(aes(x=day, ymin=low, ymax=high, fill=t), data=data, alpha=0.35)
   return(pl)
 }
 
 
-plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confint=0.95, title='SIRJ plot 95% interval') {
+plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confint=0.95, title='SIRJ plot 95% interval', special_theme=FALSE) {
   total <- data.frame(histories)
   vars <- c('S', 'I', 'R', 'J')[c(S, I, R, J)]
   pl <- ggplot()
-  for (t in vars) {
+  for (t in vars) {plot
     pl <- plotTypeConf(pl, total, t, confint)
   }
   scale <- c(
@@ -32,6 +32,22 @@ plotConfidenceSIRJ <- function(histories, S=TRUE, I=TRUE, R=TRUE, J=TRUE, confin
     'R' = 'green'
   )
   pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title=title, x='days', y='cases', fill='', colour='')
+  if (special_theme) {
+    library(showtext)
+    font_add('lmodern', regular = '/usr/share/fonts/TTF/cmunrm.ttf')
+    showtext_auto()
+    pl <- pl + theme(rect=element_rect(fill="transparent", color="transparent"), 
+                     axis.title.x = element_text(family="lmodern", colour='white', size=rel(10)),
+                     axis.title.y = element_text(family="lmodern", colour='white', size=rel(10)),
+                     plot.background = element_rect(fill="transparent", colour='transparent'),
+                     panel.background = element_rect(fill="transparent", colour='transparent'),
+                     plot.title = element_text(family="lmodern", colour='white', size = rel(20)),
+                     legend.text = element_text(family="lmodern", colour='white', size=rel(8)),
+                     legend.title=element_text(family="lmodern", colour='white', size=rel(10)),
+                     axis.text = element_text(family='lmodern', colour='white', size=rel(8))
+    )
+  }
+  
   return(pl)
 }
 
@@ -67,6 +83,6 @@ plotConfCumRKI<- function(h, start, end, scale, confint=0.95) {
     'cum' = 'blue',
     'RKI' = 'black'
   )
-  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='Cumulative infections 95% confidence', x='days', y='cases', fill='', colour='') + guides(fill=FALSE, shape=FALSE)
+  pl <- pl + scale_color_manual(values = scale) + scale_fill_manual(values=scale) + labs(title='Cumulative infections', x='days', y='cases', fill='', colour='') + guides(fill=FALSE, shape=FALSE)
   return(pl)
 }
